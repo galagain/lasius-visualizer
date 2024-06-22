@@ -1,0 +1,22 @@
+body {
+    font-family: 'Roboto', sans-serif; /* Use 'Roboto' font from Google Fonts */
+    background-color: #262626; /* Set background color to dark gray */
+    color: #f8f9fa; /* Set text color to light gray */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    display: flex; /* Use flexbox for layout */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    height: 100vh; /* Set height to full viewport height */
+}
+
+header {
+    text-align: center; /* Center-align text */
+}
+
+header h1 {
+    font-size: 3em; /* Set font size to 3em */
+    font-weight: 700; /* Make text bold */
+    color: #f8f9fa; /* Set text color to light gray */
+    margin: 0; /* Remove default margin */
+}
