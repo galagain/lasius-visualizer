@@ -3,14 +3,19 @@ body {
     background-color: #262626; /* Set background color to dark gray */
     color: #f8f9fa; /* Set text color to light gray */
     margin: 0; /* Remove default margin */
-    padding: 0; /* Remove default padding */
     display: flex; /* Use flexbox for layout */
-    justify-content: center; /* Center content horizontally */
-    align-items: center; /* Center content vertically */
+    flex-direction: column; /* Vertical stack */
+    align-items: center; /* Center content horizontally */
     height: 100vh; /* Set height to full viewport height */
+    padding: 2%; /* Add padding around the content */
 }
 
 header {
+    display: flex; /* Use flexbox */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    height: 10%; /* Header height */
+    width: 100%; /* Full width */
     text-align: center; /* Center-align text */
 }
 
@@ -19,4 +24,46 @@ header h1 {
     font-weight: 700; /* Make text bold */
     color: #f8f9fa; /* Set text color to light gray */
     margin: 0; /* Remove default margin */
+}
+
+main {
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-between; /* Evenly space out containers */
+    gap: 2%; /* Horizontal spacing between containers */
+    height: 80%; /* Containers' height */
+    width: 100%; /* Full width */
+    margin-top: 2%; /* Space between header and main content */
+}
+
+/* General container styling */
+#papers-list-container,
+#graph-container,
+#chronological-list-container {
+    background-color: #333; /* Background color */
+    padding: 1rem; /* Inner padding */
+    border-radius: 8px; /* Rounded corners */
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Vertical stack */
+    align-items: center; /* Center items horizontally */
+    justify-content: flex-start; /* Align items to the top */
+}
+
+#papers-list-container {
+    flex: 1; /* Takes up 25% of the space */
+}
+
+#graph-container {
+    flex: 2; /* Takes up 50% of the space */
+}
+
+#chronological-list-container {
+    flex: 1; /* Takes up 25% of the space */
+}
+
+/* Title styling */
+h2 {
+    margin: 0; /* Remove default margin */
+    color: #f8f9fa; /* Text color */
+    text-align: center; /* Center text */
+    width: 100%; /* Full width to center text */
 }
