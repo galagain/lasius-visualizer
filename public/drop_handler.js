@@ -38,7 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         const title = jsonData.title || 'No title'; // Assume each JSON has a 'title' field
                         const button = document.createElement('button');
                         button.textContent = title;
-                        button.onclick = () => alert(`Title: ${title}\nFile: ${file.name}`);
+                        button.dataset.title = title;
+                        button.dataset.fileName = file.name;
                         jsonContent.appendChild(button);
                     } catch (error) {
                         alert('Error reading JSON file.');
