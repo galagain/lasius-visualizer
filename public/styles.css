@@ -1,3 +1,9 @@
+/* Set the base font size relative to the viewport width */
+html {
+    font-size: 1vw; /* 1% of the viewport width */
+}
+
+/* General body styling */
 body {
     font-family: 'Roboto', sans-serif; /* Use 'Roboto' font from Google Fonts */
     background-color: #262626; /* Set background color to dark gray */
@@ -7,9 +13,10 @@ body {
     flex-direction: column; /* Vertical stack */
     align-items: center; /* Center content horizontally */
     height: 100vh; /* Set height to full viewport height */
-    padding: 0; /* Add padding around the content */
+    padding: 0; /* No padding around the content */
 }
 
+/* Header styling */
 header {
     display: flex; /* Use flexbox */
     justify-content: center; /* Center content horizontally */
@@ -20,12 +27,13 @@ header {
 }
 
 header h1 {
-    font-size: 3em; /* Set font size to 3em */
+    font-size: 3rem; /* Set font size to 3rem */
     font-weight: 700; /* Make text bold */
     color: #f8f9fa; /* Set text color to light gray */
     margin: 0; /* Remove default margin */
 }
 
+/* Main content styling */
 main {
     display: flex; /* Use flexbox for layout */
     justify-content: space-between; /* Evenly space out containers */
@@ -63,33 +71,71 @@ main {
 /* Title styling */
 h2 {
     margin: 0; /* Remove default margin */
+    font-size: 1rem; /* Use rem for font size */
     color: #f8f9fa; /* Text color */
     text-align: center; /* Center text */
     width: 100%; /* Full width to center text */
 }
 
+/* Style for drop zone */
+.drop-zone {
+    border: 2px dashed #4CAF50; /* Green dashed border */
+    border-radius: 10px; /* Rounded corners */
+    text-align: center; /* Center text within the drop zone */
+    background-color: rgba(76, 175, 80, 0.1); /* Light green background */
+    color: #333; /* Text color */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow */
+    position: absolute; /* Absolute positioning */
+    width: 23.5%; /* Fixed width */
+    height: 5vh; /* 5% of viewport height */
+    top: 3%; /* Position 3% from the top */
+    left: 1.5%; /* Position 3% from the left */
+    display: flex; /* Use flexbox */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    font-family: 'Roboto', sans-serif; /* Use 'Roboto' font */
+}
+
+.drop-zone p {
+    margin: 0; /* Remove default margin */
+    font-size: 0.75rem; /* Use rem for font size */
+    color: #4CAF50; /* Green text color */
+}
+
+/* Style for file input (hidden) */
+#file-input {
+    display: none; /* Hide file input element */
+}
+
+/* Style for drop zone when dragging */
+.drop-zone.dragging {
+    background-color: rgba(76, 175, 80, 0.2); /* Darker green background */
+    border-color: #388E3C; /* Darker green border */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+}
+
 /* General button styling */
 button {
-    padding: 0.5em 1em;
-    margin: 0.5em;
-    border: none;
+    padding: 0.5rem 1rem; /* Padding inside the button */
+    margin: 0.5rem; /* Margin outside the button */
+    border: none; /* No border */
     border-radius: 8px; /* Rounded corners */
     background-color: #4CAF50; /* Green background */
     color: white; /* White text */
-    font-size: 1em;
-    cursor: pointer;
+    font-size: 1rem; /* Use rem for font size */
+    cursor: pointer; /* Pointer cursor on hover */
     transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow */
 }
 
-/* Hover effect */
 button:hover {
     background-color: #45a049; /* Darker green on hover */
-    transform: translateY(-2px); /* Lift the button slightly */
+    transform: translateY(-2px); /* Lift the button slightly on hover */
 }
 
-/* Active effect */
 button:active {
     background-color: #3e8e41; /* Even darker green when pressed */
-    transform: translateY(0); /* Reset lift */
+    transform: translateY(0); /* Reset lift on click */
 }
