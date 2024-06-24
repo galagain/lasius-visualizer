@@ -7,7 +7,7 @@ body {
     flex-direction: column; /* Vertical stack */
     align-items: center; /* Center content horizontally */
     height: 100vh; /* Set height to full viewport height */
-    padding: 2%; /* Add padding around the content */
+    padding: 0; /* Add padding around the content */
 }
 
 header {
@@ -30,8 +30,8 @@ main {
     display: flex; /* Use flexbox for layout */
     justify-content: space-between; /* Evenly space out containers */
     gap: 2%; /* Horizontal spacing between containers */
-    height: 80%; /* Containers' height */
-    width: 100%; /* Full width */
+    height: 85%; /* Containers' height */
+    width: 97%; /* Full width */
     margin-top: 2%; /* Space between header and main content */
 }
 
@@ -66,4 +66,30 @@ h2 {
     color: #f8f9fa; /* Text color */
     text-align: center; /* Center text */
     width: 100%; /* Full width to center text */
+}
+
+/* General button styling */
+button {
+    padding: 0.5em 1em;
+    margin: 0.5em;
+    border: none;
+    border-radius: 8px; /* Rounded corners */
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Hover effect */
+button:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: translateY(-2px); /* Lift the button slightly */
+}
+
+/* Active effect */
+button:active {
+    background-color: #3e8e41; /* Even darker green when pressed */
+    transform: translateY(0); /* Reset lift */
 }

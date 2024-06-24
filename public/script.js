@@ -10,19 +10,13 @@ async function displayJSONTitles() {
         }
         const jsonFiles = await response.json();
 
-        // Fetch each JSON file and display its title
-        for (const file of jsonFiles) {
-            const filePath = `/jsons/${file}`;
-            const fileResponse = await fetch(filePath);
-            if (!fileResponse.ok) {
-                throw new Error(`Failed to fetch ${filePath}: ${fileResponse.statusText}`);
-            }
-            const jsonData = await fileResponse.json();
-            const title = jsonData.title || 'No title'; // Assume each JSON has a 'title' field
-            const titleElement = document.createElement('div');
-            titleElement.textContent = title;
-            container.appendChild(titleElement);
-        }
+        // Create a button for each JSON title
+        jsonFiles.forEach(fileData => {
+            const button = document.createElement('button');
+            button.textContent = fileData.title;
+            button.onclick = () => alert(`Title: ${fileData.title}\nFile: ${fileData.file}`);
+            container.appendChild(button);
+        });
     } catch (error) {
         console.error('Error:', error);
         container.textContent = 'Failed to load JSON files.';

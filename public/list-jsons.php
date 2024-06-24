@@ -10,6 +10,18 @@
         return pathinfo($file, PATHINFO_EXTENSION) === 'json';
     });
 
+    $result = [];
+    // Extract titles from each JSON file
+    foreach ($jsonFiles as $file) {
+        $filePath = "$dir/$file";
+        $jsonData = json_decode(file_get_contents($filePath), true);
+        $title = $jsonData['title'] ?? 'No title'; // Default to 'No title' if not set
+        $result[] = [
+            'title' => $title,
+            'file' => $file // Include the file name for reference
+        ];
+    }
+
     // Encode the list of JSON files to a JSON format and output it
-    echo json_encode(array_values($jsonFiles));
+    echo json_encode($result);
 ?>
