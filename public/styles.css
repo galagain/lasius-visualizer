@@ -53,10 +53,6 @@ main {
     margin-top: 2%; /* Space between header and main content */
 }
 
-main.no-margin {
-    margin-top: 0; /* Remove margin when this class is added */
-}
-
 /* General container styling */
 #papers-list-container,
 #graph-container,
@@ -181,6 +177,8 @@ button:active {
     color: #4CAF50; /* Green text color */
     font-weight: bold; /* Bold text */
     text-decoration: none; /* Remove underline from links */
+    font-size: 0.8rem; /* Set smaller font size for paper titles */
+    text-align: center; /* Center text inside the container */
 }
 
 .paper-item a:hover {
@@ -190,4 +188,44 @@ button:active {
 .paper-item .paper-info {
     font-size: 0.9rem; /* Smaller text size */
     color: #ccc; /* Light gray text color */
+}
+
+.paper-details {
+    font-size: 0.85rem; /* Smaller text size */
+    color: #ccc; /* Light gray text color */
+    margin-top: 5px; /* Space above details */
+    background-color: #555; /* Slightly darker background for details */
+    padding: 10px; /* Inner padding */
+    border-radius: 5px; /* Rounded corners */
+    width: 80%; /* Width of the details container */
+    max-width: 600px; /* Maximum width */
+    text-align: center; /* Center text inside the container */
+    margin-left: auto; /* Center the container horizontally */
+    margin-right: auto; /* Center the container horizontally */
+}
+
+
+/* Positioning for sort button */
+#sort-button {
+    top: 1rem; /* Position from the top */
+    right: 1rem; /* Position from the right */
+    padding: 0.5rem 1rem; /* Padding inside the button */
+    border: none; /* No border */
+    border-radius: 8px; /* Rounded corners */
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    font-size: 0.75rem; /* Use rem for font size */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow */
+}
+
+#sort-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: translateY(-2px); /* Lift the button slightly on hover */
+}
+
+#sort-button:active {
+    background-color: #3e8e41; /* Even darker green when pressed */
+    transform: translateY(0); /* Reset lift on click */
 }
