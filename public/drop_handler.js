@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('file-input');
-    const jsonContent = document.getElementById('json-content');
+    const buttonContainer = document.getElementById('button-container');
 
     // Handle file selection via input or drag-and-drop
     dropZone.addEventListener('dragover', (e) => {
@@ -28,19 +28,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function handleFiles(files) {
-        jsonContent.innerHTML = ''; // Clear previous content
         Array.from(files).forEach(file => {
             if (file.type === 'application/json') {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     try {
                         const jsonData = JSON.parse(e.target.result);
-                        const title = jsonData.title || 'No title'; // Assume each JSON has a 'title' field
+                        const title = jsonData.title || 'No title';
                         const button = document.createElement('button');
                         button.textContent = title;
-                        button.dataset.title = title;
-                        button.dataset.fileName = file.name;
-                        jsonContent.appendChild(button);
+                        button.dataset.json = JSON.stringify(jsonData);
+                        button.className = 'paper-button';
+                        buttonContainer.appendChild(button);
                     } catch (error) {
                         alert('Error reading JSON file.');
                     }

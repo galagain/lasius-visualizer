@@ -19,11 +19,12 @@ body {
 /* Header styling */
 header {
     display: flex; /* Use flexbox */
-    justify-content: center; /* Center content horizontally */
-    align-items: center; /* Center content vertically */
-    height: 10%; /* Header height */
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center content horizontally */
+    height: auto; /* Adjust height to content */
     width: 100%; /* Full width */
     text-align: center; /* Center-align text */
+    margin-bottom: 20px; /* Space below header */
 }
 
 header h1 {
@@ -31,6 +32,15 @@ header h1 {
     font-weight: 700; /* Make text bold */
     color: #f8f9fa; /* Set text color to light gray */
     margin: 0; /* Remove default margin */
+}
+
+/* Styling for button container */
+#button-container {
+    margin-top: 10px; /* Space between the title and the buttons */
+    display: flex; /* Use flexbox */
+    flex-wrap: wrap; /* Allow buttons to wrap to the next line */
+    justify-content: center; /* Center buttons horizontally */
+    gap: 10px; /* Space between buttons */
 }
 
 /* Main content styling */
@@ -41,6 +51,10 @@ main {
     height: 85%; /* Containers' height */
     width: 97%; /* Full width */
     margin-top: 2%; /* Space between header and main content */
+}
+
+main.no-margin {
+    margin-top: 0; /* Remove margin when this class is added */
 }
 
 /* General container styling */
@@ -138,4 +152,42 @@ button:hover {
 button:active {
     background-color: #3e8e41; /* Even darker green when pressed */
     transform: translateY(0); /* Reset lift on click */
+}
+
+/* Container for the list of paper titles */
+#json-content {
+    overflow-y: auto; /* Enable vertical scrolling */
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center items horizontally */
+    width: 100%; /* Full width */
+}
+
+/* Styling for paper item */
+.paper-item {
+    margin-top: 10px; /* Space above each paper item */
+    padding: 15px; /* Inner padding */
+    background-color: #444; /* Background color */
+    color: #fff; /* Text color */
+    border-radius: 8px; /* Rounded corners */
+    width: 80%; /* Width of paper item container */
+    text-align: left; /* Align text to the left */
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack children vertically */
+    gap: 5px; /* Space between elements */
+}
+
+.paper-item a {
+    color: #4CAF50; /* Green text color */
+    font-weight: bold; /* Bold text */
+    text-decoration: none; /* Remove underline from links */
+}
+
+.paper-item a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+.paper-item .paper-info {
+    font-size: 0.9rem; /* Smaller text size */
+    color: #ccc; /* Light gray text color */
 }

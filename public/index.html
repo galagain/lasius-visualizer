@@ -13,22 +13,26 @@
         <h1>Lasius</h1>
     </header>
 
+    <!-- Drop zone for JSON files -->
+    <div id="drop-zone" class="drop-zone">
+        <p>Drag & drop your JSON files here, or click to select files</p>
+        <input type="file" id="file-input" multiple accept=".json" />
+    </div>
+
     <main>
         <!-- Container for the list of papers -->
         <div id="papers-list-container">
             <h2 id="list-title">Papers List</h2>
+            <!-- Element to display the content of JSON files -->
+            <div id="json-content">
+                <ul id="title-list"></ul>
+            </div>
         </div>
 
         <!-- Container for the graph of papers -->
         <div id="graph-container">
             <h2 id="graph-title">Graph of papers</h2>
-            <!-- Drop zone for JSON files -->
-            <div id="drop-zone" class="drop-zone">
-                <p>Drag & drop your JSON files here, or click to select files</p>
-                <input type="file" id="file-input" multiple accept=".json" />
-            </div>
-            <!-- Element to display the content of JSON files -->
-            <div id="json-content"></div>
+            <div id="button-container"></div>
         </div>
 
         <!-- Container for the chronological list of recent papers -->
