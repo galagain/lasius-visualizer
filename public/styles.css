@@ -227,3 +227,46 @@ button:active {
     background-color: #3e8e41; /* Even darker green when pressed */
     transform: translateY(0); /* Reset lift on click */
 }
+
+/* Styling for the slider container */
+#slider-container {
+    position: absolute;
+    bottom: 10px; /* Position the slider container 10px from the bottom */
+    left: 0;
+    right: 0;
+    margin: auto; /* Center the slider container horizontally */
+    width: 90%; /* Set the width of the slider container to 90% */
+    background-color: rgba(0, 0, 0, 0.5); /* Less dark background to cover the graph */
+    padding: 20px; /* Add 20px padding inside the slider container */
+    border-radius: 10px; /* Round the corners of the slider container */
+    display: none; /* Hide by default */
+    flex-direction: column; /* Arrange children in a column */
+    align-items: center; /* Center align children horizontally */
+}
+
+/* Styling for the slider value bubble */
+#slider-span {
+    position: absolute;
+    display: flex; /* Use flexbox layout */
+    flex-direction: column; /* Arrange children in a column */
+    align-items: center; /* Center align children horizontally */
+    transform: translateX(-50%); /* Center the span horizontally */
+    bottom: 50px; /* Position the span 50px from the bottom */
+}
+
+/* Styling for the slider value text */
+#sliderValue {
+    color: white; /* Set text color to white */
+    background-color: #333; /* Set background color to dark gray */
+    border: 1px solid #4CAF50; /* Add green border */
+    padding: 5px 10px; /* Add padding inside the value bubble */
+    border-radius: 5px; /* Round the corners of the value bubble */
+    white-space: nowrap; /* Prevent text wrapping */
+    position: relative; /* Set position relative for inner positioning */
+}
+
+/* Styling for the slider input */
+#sliderInput {
+    width: 100%; /* Set the width of the slider input to 100% */
+    margin-top: 30px; /* Space between the slider and the span */
+}

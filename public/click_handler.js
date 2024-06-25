@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     const titleList = document.getElementById('title-list');
     const sortButton = document.getElementById('sort-button');
+    const sliderInput = document.getElementById('sliderInput');
+    const sliderValue = document.getElementById('sliderValue');
+    const sliderSpan = document.getElementById('slider-span');
+    const sliderContainer = document.getElementById('slider-container');
     let sortByCitations = true; // Default sorting by citations
 
     const graphContainer = d3.select('#graph-container');
@@ -10,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .attr('width', width)
         .attr('height', height)
         .call(d3.zoom().on("zoom", function (event) {
-            svg.attr("transform", event.transform)
+            svg.attr("transform", event.transform);
         }))
         .append("g");
 
@@ -20,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const jsonData = JSON.parse(event.target.dataset.json);
                 displayPaperTitles(jsonData.nodes, sortByCitations);
                 updateGraph(jsonData);
+                updateSlider(jsonData);
+                sliderContainer.style.display = 'flex'; // Show the slider container
             } catch (error) {
                 alert('Error displaying paper titles or updating graph.');
             }
@@ -81,6 +87,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const topNodeIds = new Set(topNodes.map(node => node.paperId));
         const topLinks = data.links.filter(link => topNodeIds.has(link.source) && topNodeIds.has(link.target));
 
+        const minDate = d3.min(topNodes, d => new Date(d.publicationDate));
+        const maxDate = d3.max(topNodes, d => new Date(d.publicationDate));
+        const dateScale = d3.scaleTime()
+            .domain([minDate, maxDate])
+            .range([3, 30]); // Increased range for radii to accentuate size differences
+
+        const colorScale = d3.scaleSequential(d3.interpolateRdYlBu)
+            .domain([maxDate, minDate]); // Reverse the domain for better color distinction
+
         const simulation = d3.forceSimulation(topNodes)
             .force('link', d3.forceLink(topLinks).id(d => d.paperId).distance(200))
             .force('charge', d3.forceManyBody().strength(-300))
@@ -99,8 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
             .selectAll('circle')
             .data(topNodes)
             .enter().append('circle')
-            .attr('r', d => Math.sqrt(d.citationCount) * 2)
-            .attr('fill', '#69b3a2')
+            .attr('r', d => dateScale(new Date(d.publicationDate)))
+            .attr('fill', d => colorScale(new Date(d.publicationDate)))
+            .attr('stroke', '#333')
+            .attr('stroke-width', 1.5)
             .call(d3.drag()
                 .on('start', dragstarted)
                 .on('drag', dragged)
@@ -137,5 +154,35 @@ document.addEventListener('DOMContentLoaded', () => {
             d.fx = null;
             d.fy = null;
         }
+    }
+
+    function updateSlider(data) {
+        const citations = data.nodes.map(node => node.citationCount);
+        const minCitations = Math.min(...citations);
+        const maxCitations = Math.max(...citations);
+
+        // Update slider min and max
+        sliderInput.min = minCitations;
+        sliderInput.max = maxCitations;
+
+        // Set initial value to 75% of the max citations
+        const initialValue = Math.round(maxCitations * 0.75);
+        sliderInput.value = initialValue;
+        sliderValue.textContent = initialValue;
+
+        // Add event listener to update value display and position on input change
+        sliderInput.addEventListener('input', () => {
+            sliderValue.textContent = sliderInput.value;
+            updateSliderSpanPosition(sliderInput.value, minCitations, maxCitations);
+        });
+
+        // Ensure initial position is correct
+        updateSliderSpanPosition(initialValue, minCitations, maxCitations);
+    }
+
+    function updateSliderSpanPosition(value, min, max) {
+        const percentage = (value - min) / (max - min) * 100;
+        sliderSpan.style.left = `calc(${percentage}%`; // Adjust position relative to the slider
+        sliderSpan.style.transform = 'translateX(-50%)'; // Center the span
     }
 });
