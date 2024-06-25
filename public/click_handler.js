@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function displayPaperTitles(nodes) {
+        nodes.sort((a, b) => b.citationCount - a.citationCount);
+
         titleList.innerHTML = ''; // Clear previous list
         nodes.forEach(node => {
             const paperItem = document.createElement('div');
@@ -34,5 +36,4 @@ document.addEventListener('DOMContentLoaded', () => {
             titleList.appendChild(paperItem);
         });
     }
-
 });
