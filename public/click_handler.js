@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('sortPapers', (event) => {
         const jsonData = JSON.parse(document.querySelector('.paper-button').dataset.json);
         displayPaperTitles(jsonData.nodes, event.detail.sortByCitations);
-        updateGraph(jsonData);
     });
 
     function displayPaperTitles(nodes, sortByCitations = true) {
