@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sliderSpan = document.getElementById('slider-span');
     const sliderContainer = document.getElementById('slider-container');
     let sortByCitations = true; // Default sorting by citations
+    let citationValues = []; // To store unique citation counts
 
     const graphContainer = d3.select('#graph-container');
     const width = graphContainer.node().clientWidth;
@@ -24,8 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const jsonData = JSON.parse(event.target.dataset.json);
                 displayPaperTitles(jsonData.nodes, sortByCitations);
-                updateGraph(jsonData, sliderInput.value);
-                updateSlider(jsonData);
+                citationValues = getUniqueCitationValues(jsonData.nodes);
+                updateSlider(citationValues);
+                updateGraph(jsonData, citationValues[Math.floor(citationValues.length * 0.75)]);
                 sliderContainer.style.display = 'flex'; // Show the slider container
             } catch (error) {
                 alert('Error displaying paper titles or updating graph.');
@@ -46,10 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     sliderInput.addEventListener('input', () => {
-        sliderValue.textContent = sliderInput.value;
-        const event = new CustomEvent('updateGraph', { detail: { minCitations: parseInt(sliderInput.value) } });
+        const index = parseInt(sliderInput.value);
+        const citationValue = citationValues[index];
+        sliderValue.textContent = citationValue;
+        const event = new CustomEvent('updateGraph', { detail: { minCitations: citationValue } });
         document.dispatchEvent(event);
-        updateSliderSpanPosition(sliderInput.value, parseInt(sliderInput.min), parseInt(sliderInput.max));
+        updateSliderSpanPosition(index, 0, citationValues.length - 1);
     });
 
     document.addEventListener('updateGraph', (event) => {
@@ -84,6 +88,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             titleList.appendChild(paperItem);
         });
+    }
+
+    function getUniqueCitationValues(nodes) {
+        const citationCounts = nodes.map(node => node.citationCount);
+        return [...new Set(citationCounts)].sort((a, b) => a - b);
     }
 
     function updateGraph(data, minCitations) {
@@ -189,30 +198,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateSlider(data) {
-        const citations = data.nodes.map(node => node.citationCount);
-        const minCitations = Math.min(...citations);
-        const maxCitations = Math.max(...citations);
+    function updateSlider(citationValues) {
+        sliderInput.min = 0;
+        sliderInput.max = citationValues.length - 1;
+        sliderInput.step = 1;
 
-        sliderInput.min = minCitations;
-        sliderInput.max = maxCitations;
+        const initialIndex = Math.floor(citationValues.length * 0.75);
+        sliderInput.value = initialIndex;
+        sliderValue.textContent = citationValues[initialIndex];
 
-        const initialValue = Math.round(maxCitations * 0.75);
-        sliderInput.value = initialValue;
-        sliderValue.textContent = initialValue;
-
-        sliderInput.addEventListener('input', () => {
-            sliderValue.textContent = sliderInput.value;
-            const event = new CustomEvent('updateGraph', { detail: { minCitations: parseInt(sliderInput.value) } });
-            document.dispatchEvent(event);
-            updateSliderSpanPosition(sliderInput.value, minCitations, maxCitations);
-        });
-
-        updateSliderSpanPosition(initialValue, minCitations, maxCitations);
+        updateSliderSpanPosition(initialIndex, 0, citationValues.length - 1);
     }
 
-    function updateSliderSpanPosition(value, min, max) {
-        const percentage = (value - min) / (max - min) * 100;
+    function updateSliderSpanPosition(index, minIndex, maxIndex) {
+        const percentage = (index - minIndex) / (maxIndex - minIndex) * 100;
         sliderSpan.style.left = `calc(${percentage}%)`;
     }
 });
