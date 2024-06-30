@@ -321,14 +321,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (references.size > 0) {
             citationsReferencesContainer.innerHTML += `
-            <h4>This paper cites</h4>
+            <h4>This paper is cited by</h4>
             <ul>${Array.from(references).map(ref => `<li>${formatPaper(ref)}</li>`).join('')}</ul>
         `;
         }
 
         if (citations.size > 0) {
             citationsReferencesContainer.innerHTML += `
-            <h4>This paper is cited by</h4>
+            <h4>This paper cites</h4>
             <ul>${Array.from(citations).map(cit => `<li>${formatPaper(cit)}</li>`).join('')}</ul>
         `;
         }
