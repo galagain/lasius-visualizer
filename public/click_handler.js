@@ -29,8 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 displayPaperTitles(jsonData.nodes, sortByCitations);
                 citationValues = getUniqueCitationValues(jsonData.nodes);
                 updateSlider(citationValues);
-                updateGraph(jsonData, citationValues[Math.floor(citationValues.length * 0.75)]);
-                sliderContainer.style.display = 'flex'; // Show the slider container
+                sliderContainer.style.display = 'flex';
+
+                // Update variables to the clicked button's data
+                document.querySelectorAll('.paper-button').forEach(button => button.classList.remove('active'));
+                event.target.classList.add('active');
+
+                const initialCitationValue = citationValues[Math.floor(citationValues.length * 0.75)];
+                document.dispatchEvent(new CustomEvent('updateGraph', { detail: { jsonData, minCitations: initialCitationValue } }));
             } catch (error) {
                 alert('Error displaying paper titles or updating graph.');
             }
@@ -53,13 +59,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const index = parseInt(sliderInput.value);
         const citationValue = citationValues[index];
         sliderValue.textContent = citationValue;
-        const event = new CustomEvent('updateGraph', { detail: { minCitations: citationValue } });
-        document.dispatchEvent(event);
+        const jsonData = JSON.parse(document.querySelector('.paper-button.active').dataset.json);
+        updateGraph(jsonData, citationValue);
         updateSliderSpanPosition(index, 0, citationValues.length - 1);
     });
 
     document.addEventListener('updateGraph', (event) => {
-        const jsonData = JSON.parse(document.querySelector('.paper-button').dataset.json);
+        const jsonData = event.detail.jsonData;
         updateGraph(jsonData, event.detail.minCitations);
     });
 
