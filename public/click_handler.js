@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
         svg.selectAll('circle').attr('opacity', d =>
-            connectedPapers.has(d.paperId) ? 1 : 0.1
+            d.paperId === node.paperId ? 1 : 0.1
         );
 
         svg.selectAll('text').attr('fill', d => {
