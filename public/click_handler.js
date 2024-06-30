@@ -209,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function handleClick(event, d) {
             displayPaperDetails(d); // Display paper details on click
+            highlightLinks(d); // Highlight links connected to the clicked node
         }
     }
 
@@ -240,5 +241,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <p><a href="${paper.url}" target="_blank">Read Paper</a></p>
         `;
         paperDetails.classList.add('visible'); // Show the paper details container
+    }
+
+    function highlightLinks(node) {
+        svg.selectAll('line').attr('stroke', link =>
+            link.source.paperId === node.paperId || link.target.paperId === node.paperId ? 'red' : '#999'
+        );
     }
 });
