@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
             svg.selectAll('circle').classed('active', false); // Remove 'active' class from all nodes
             svg.selectAll('line').attr('stroke', '#999').attr('opacity', 1); // Reset link styles
             svg.selectAll('circle').attr('opacity', 1); // Reset node opacity
-            svg.selectAll('text').attr('opacity', 1); // Reset text opacity
+            svg.selectAll('text').attr('opacity', 1).attr('fill', '#fff'); // Reset text opacity and color
             d3.selectAll('.paper-item').style('opacity', 1); // Reset paper item opacity
 
             if (!isActive) {
@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const connectedPapers = new Set();
         connectedPapers.add(node.paperId);
 
-        svg.selectAll('line').attr('stroke', link => {
+        const linkColor = link => {
             if (link.source.paperId === node.paperId) {
                 connectedPapers.add(link.target.paperId);
                 return 'red'; // Outgoing links (citations)
@@ -273,15 +273,24 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 return '#999'; // Default link color
             }
-        }).attr('opacity', link =>
-            link.source.paperId === node.paperId || link.target.paperId === node.paperId ? 1 : 0.1
-        );
+        };
+
+        svg.selectAll('line').attr('stroke', linkColor)
+            .attr('opacity', link =>
+                link.source.paperId === node.paperId || link.target.paperId === node.paperId ? 1 : 0.1
+            );
 
         svg.selectAll('circle').attr('opacity', d =>
             connectedPapers.has(d.paperId) ? 1 : 0.1
         );
 
-        svg.selectAll('text').attr('opacity', d =>
+        svg.selectAll('text').attr('fill', d => {
+            if (d.paperId === node.paperId) return 'white'; // Clicked node remains white
+            const links = svg.selectAll('line').filter(l => l.source.paperId === d.paperId || l.target.paperId === d.paperId).data();
+            const outgoing = links.some(l => l.source.paperId === node.paperId);
+            const incoming = links.some(l => l.target.paperId === node.paperId);
+            return outgoing ? 'red' : (incoming ? 'green' : '#999'); // Match link color
+        }).attr('opacity', d =>
             connectedPapers.has(d.paperId) ? 1 : 0.1
         );
 
