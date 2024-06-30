@@ -298,5 +298,40 @@ document.addEventListener('DOMContentLoaded', () => {
             const paperId = d3.select(this).select('a').attr('href').split('/').pop();
             return connectedPapers.has(paperId) ? 1 : 0.1;
         });
+
+        // Collect references and citations
+        const references = new Set();
+        const citations = new Set();
+
+        svg.selectAll('line').each(function(link) {
+            if (link.target.paperId === node.paperId) {
+                references.add(link.source);
+            } else if (link.source.paperId === node.paperId) {
+                citations.add(link.target);
+            }
+        });
+
+        const formatPaper = paper => {
+            const date = paper.publicationDate ? `[${paper.publicationDate}] ` : '';
+            return `${date}${paper.title}`;
+        };
+
+        const citationsReferencesContainer = document.getElementById('citations-references-container');
+        citationsReferencesContainer.innerHTML = '';
+
+        if (references.size > 0) {
+            citationsReferencesContainer.innerHTML += `
+            <h4>This paper cites</h4>
+            <ul>${Array.from(references).map(ref => `<li>${formatPaper(ref)}</li>`).join('')}</ul>
+        `;
+        }
+
+        if (citations.size > 0) {
+            citationsReferencesContainer.innerHTML += `
+            <h4>This paper is cited by</h4>
+            <ul>${Array.from(citations).map(cit => `<li>${formatPaper(cit)}</li>`).join('')}</ul>
+        `;
+        }
     }
+
 });
