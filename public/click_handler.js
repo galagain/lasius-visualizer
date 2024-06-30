@@ -214,8 +214,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function handleClick(event, d) {
-            displayPaperDetails(d); // Display paper details on click
-            highlightLinks(d); // Highlight links connected to the clicked node
+            const isActive = d3.select(this).classed('active');
+            svg.selectAll('circle').classed('active', false); // Remove 'active' class from all nodes
+            svg.selectAll('line').attr('stroke', '#999').attr('opacity', 1); // Reset link styles
+            svg.selectAll('circle').attr('opacity', 1); // Reset node opacity
+            svg.selectAll('text').attr('opacity', 1); // Reset text opacity
+            d3.selectAll('.paper-item').style('opacity', 1); // Reset paper item opacity
+
+            if (!isActive) {
+                d3.select(this).classed('active', true); // Set the clicked node as 'active'
+                displayPaperDetails(d); // Display paper details on click
+                highlightLinks(d); // Highlight links connected to the clicked node
+            }
         }
     }
 
