@@ -244,14 +244,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function highlightLinks(node) {
+        const connectedPapers = new Set();
+        connectedPapers.add(node.paperId);
+
         svg.selectAll('line').attr('stroke', link => {
             if (link.source.paperId === node.paperId) {
+                connectedPapers.add(link.target.paperId);
                 return 'red'; // Outgoing links (citations)
             } else if (link.target.paperId === node.paperId) {
+                connectedPapers.add(link.source.paperId);
                 return 'green'; // Incoming links (references)
             } else {
                 return '#999'; // Default link color
             }
+        }).attr('opacity', link =>
+            link.source.paperId === node.paperId || link.target.paperId === node.paperId ? 1 : 0.1
+        );
+
+        svg.selectAll('circle').attr('opacity', d =>
+            connectedPapers.has(d.paperId) ? 1 : 0.1
+        );
+
+        svg.selectAll('text').attr('opacity', d =>
+            connectedPapers.has(d.paperId) ? 1 : 0.1
+        );
+
+        d3.selectAll('.paper-item').style('opacity', function() {
+            const paperId = d3.select(this).select('a').attr('href').split('/').pop();
+            return connectedPapers.has(paperId) ? 1 : 0.1;
         });
     }
 });
