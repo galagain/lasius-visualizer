@@ -36,13 +36,11 @@ header h1 {
 
 /* Positioning for button container */
 #button-container {
-    position: absolute; /* Absolute positioning */
-    top: 10px; /* Position from the top */
-    right: 10px; /* Position from the right */
     display: flex; /* Use flexbox */
     flex-wrap: wrap; /* Allow buttons to wrap to the next line */
-    justify-content: flex-end; /* Align buttons to the right */
+    justify-content: center; /* Center buttons */
     gap: 10px; /* Space between buttons */
+    margin-top: 10px; /* Space above the button container */
 }
 
 /* Main content styling */
@@ -58,7 +56,7 @@ main {
 /* General container styling */
 #papers-list-container,
 #graph-container,
-#chronological-list-container {
+#paper-details-container {
     background-color: #333; /* Background color */
     padding: 1rem; /* Inner padding */
     border-radius: 8px; /* Rounded corners */
@@ -73,8 +71,13 @@ main {
 }
 
 #graph-container {
-    flex: 3; /* Takes up 75% of the space */
+    flex: 2; /* Takes up 50% of the space */
     position: relative; /* Position relative for absolute positioning of button container */
+}
+
+#paper-details-container {
+    flex: 1; /* Takes up 25% of the space */
+    overflow-y: auto; /* Enable vertical scrolling */
 }
 
 /* Title styling */
@@ -127,13 +130,13 @@ h2 {
 
 /* General button styling */
 button {
-    padding: 0.5rem 1rem; /* Padding inside the button */
-    margin: 0.5rem; /* Margin outside the button */
+    padding: 0.3rem 0.6rem; /* Padding inside the button */
+    margin: 0.3rem; /* Margin outside the button */
     border: none; /* No border */
     border-radius: 8px; /* Rounded corners */
     background-color: #4CAF50; /* Green background */
     color: white; /* White text */
-    font-size: 1rem; /* Use rem for font size */
+    font-size: 0.8rem; /* Smaller font size for buttons */
     cursor: pointer; /* Pointer cursor on hover */
     transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow */
@@ -269,4 +272,29 @@ button:active {
 #sliderInput {
     width: 100%; /* Set the width of the slider input to 100% */
     margin-top: 30px; /* Space between the slider and the span */
+}
+
+/* Styling for the paper details container */
+#paper-details-container {
+    background-color: #333; /* Background color */
+    padding: 1rem; /* Inner padding */
+    border-radius: 8px; /* Rounded corners */
+    overflow-y: auto; /* Enable vertical scrolling */
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center items horizontally */
+    justify-content: flex-start; /* Align items to the top */
+}
+
+/* Styling for individual paper details */
+#paper-details {
+    font-size: 0.85rem; /* Smaller text size */
+    color: #ccc; /* Light gray text color */
+    background-color: transparent; /* Transparent background to be invisible initially */
+    padding: 0; /* No padding */
+    border-radius: 5px; /* Rounded corners */
+    width: 100%; /* Full width */
+    max-width: 600px; /* Maximum width */
+    text-align: left; /* Align text to the left */
+    margin-top: 20px; /* Space above the paper details */
 }
