@@ -280,21 +280,53 @@ button:active {
     padding: 1rem; /* Inner padding */
     border-radius: 8px; /* Rounded corners */
     overflow-y: auto; /* Enable vertical scrolling */
-    display: flex; /* Use flexbox for layout */
+    display: flex; /* Flexbox layout */
     flex-direction: column; /* Stack children vertically */
     align-items: center; /* Center items horizontally */
     justify-content: flex-start; /* Align items to the top */
+    min-height: 100px; /* Minimum height */
 }
 
 /* Styling for individual paper details */
 #paper-details {
+    display: none; /* Hide by default */
     font-size: 0.85rem; /* Smaller text size */
     color: #ccc; /* Light gray text color */
-    background-color: transparent; /* Transparent background to be invisible initially */
-    padding: 0; /* No padding */
-    border-radius: 5px; /* Rounded corners */
+    background-color: #444; /* Slightly darker background for details */
+    padding: 20px; /* Inner padding */
+    border-radius: 8px; /* Rounded corners */
     width: 100%; /* Full width */
     max-width: 600px; /* Maximum width */
     text-align: left; /* Align text to the left */
     margin-top: 20px; /* Space above the paper details */
+}
+
+#paper-details h3 {
+    font-size: 1.2rem; /* Larger font size for title */
+    color: #fff; /* White text color for title */
+    margin-bottom: 10px; /* Space below the title */
+}
+
+#paper-details p {
+    margin: 5px 0; /* Space above and below paragraphs */
+}
+
+#paper-details ul {
+    list-style-type: disc; /* Bullet points for list items */
+    margin: 10px 0 0 20px; /* Space around the list */
+    padding: 0; /* No padding */
+}
+
+#paper-details a {
+    color: #4CAF50; /* Green color for links */
+    text-decoration: none; /* Remove underline from links */
+}
+
+#paper-details a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+/* Additional style to show paper details when a paper is clicked */
+#paper-details.visible {
+    display: block; /* Show the details container */
 }

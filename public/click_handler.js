@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const sliderValue = document.getElementById('sliderValue');
     const sliderSpan = document.getElementById('slider-span');
     const sliderContainer = document.getElementById('slider-container');
+    const paperDetailsContainer = document.getElementById('paper-details-container');
+    const paperDetails = document.getElementById('paper-details');
     let sortByCitations = true; // Default sorting by citations
     let citationValues = []; // To store unique citation counts
 
@@ -139,7 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 .on('drag', dragged)
                 .on('end', dragended))
             .on('mouseover', handleMouseOver)
-            .on('mouseout', handleMouseOut);
+            .on('mouseout', handleMouseOut)
+            .on('click', handleClick); // Add click event to nodes
 
         const label = svg.append('g')
             .selectAll('text')
@@ -196,6 +199,10 @@ document.addEventListener('DOMContentLoaded', () => {
         function handleMouseOut(event, d) {
             d3.select(this).select('title').remove(); // Remove title on mouse out
         }
+
+        function handleClick(event, d) {
+            displayPaperDetails(d); // Display paper details on click
+        }
     }
 
     function updateSlider(citationValues) {
@@ -213,5 +220,18 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateSliderSpanPosition(index, minIndex, maxIndex) {
         const percentage = (index - minIndex) / (maxIndex - minIndex) * 100;
         sliderSpan.style.left = `calc(${percentage}%)`;
+    }
+
+    function displayPaperDetails(paper) {
+        const authors = paper.authors.map(author => `<li>${author.name}</li>`).join('');
+        paperDetails.innerHTML = `
+            <h3>${paper.title}</h3>
+            <p><strong>Publication Date:</strong> ${paper.publicationDate}</p>
+            <p><strong>Citation Count:</strong> ${paper.citationCount}</p>
+            <p><strong>Authors:</strong></p>
+            <ul>${authors}</ul>
+            <p><a href="${paper.url}" target="_blank">Read Paper</a></p>
+        `;
+        paperDetails.classList.add('visible'); // Show the paper details container
     }
 });
