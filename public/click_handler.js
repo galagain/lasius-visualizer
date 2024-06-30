@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const jsonData = JSON.parse(event.target.dataset.json);
                 displayPaperTitles(jsonData.nodes, sortByCitations);
-                updateGraph(jsonData);
+                updateGraph(jsonData, sliderInput.value);
                 updateSlider(jsonData);
                 sliderContainer.style.display = 'flex'; // Show the slider container
             } catch (error) {
@@ -43,6 +43,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('sortPapers', (event) => {
         const jsonData = JSON.parse(document.querySelector('.paper-button').dataset.json);
         displayPaperTitles(jsonData.nodes, event.detail.sortByCitations);
+    });
+
+    sliderInput.addEventListener('input', () => {
+        sliderValue.textContent = sliderInput.value;
+        const event = new CustomEvent('updateGraph', { detail: { minCitations: parseInt(sliderInput.value) } });
+        document.dispatchEvent(event);
+        updateSliderSpanPosition(sliderInput.value, parseInt(sliderInput.min), parseInt(sliderInput.max));
+    });
+
+    document.addEventListener('updateGraph', (event) => {
+        const jsonData = JSON.parse(document.querySelector('.paper-button').dataset.json);
+        updateGraph(jsonData, event.detail.minCitations);
     });
 
     function displayPaperTitles(nodes, sortByCitations = true) {
@@ -74,34 +86,32 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function updateGraph(data) {
+    function updateGraph(data, minCitations) {
         svg.selectAll('*').remove(); // Clear previous graph
 
-        // Sort nodes by citation count and take the top 20
-        const topNodes = data.nodes
-            .sort((a, b) => b.citationCount - a.citationCount)
-            .slice(0, 20);
+        // Filter nodes based on minCitations
+        const filteredNodes = data.nodes.filter(node => node.citationCount >= minCitations);
 
-        // Filter links to include only those that connect top 20 nodes
-        const topNodeIds = new Set(topNodes.map(node => node.paperId));
-        const topLinks = data.links.filter(link => topNodeIds.has(link.source) && topNodeIds.has(link.target));
+        // Filter links to include only those that connect filtered nodes
+        const filteredNodeIds = new Set(filteredNodes.map(node => node.paperId));
+        const filteredLinks = data.links.filter(link => filteredNodeIds.has(link.source) && filteredNodeIds.has(link.target));
 
         const citationScale = d3.scaleSqrt()
-            .domain([0, d3.max(topNodes, d => d.citationCount)])
+            .domain([0, d3.max(filteredNodes, d => d.citationCount)])
             .range([10, 30]); // Adjusted range for node sizes
 
         const colorScale = d3.scaleSequential(d3.interpolateCool)
-            .domain([0, d3.max(topNodes, d => d.citationCount)]); // Adjust color scale domain
+            .domain([0, d3.max(filteredNodes, d => d.citationCount)]); // Adjust color scale domain
 
-        const simulation = d3.forceSimulation(topNodes)
-            .force('link', d3.forceLink(topLinks).id(d => d.paperId).distance(200)) // Increased distance for links
+        const simulation = d3.forceSimulation(filteredNodes)
+            .force('link', d3.forceLink(filteredLinks).id(d => d.paperId).distance(200)) // Increased distance for links
             .force('charge', d3.forceManyBody().strength(-500)) // Increased repulsion for nodes
             .force('center', d3.forceCenter(width / 2, height / 2));
 
         const link = svg.append('g')
             .attr('class', 'links')
             .selectAll('line')
-            .data(topLinks)
+            .data(filteredLinks)
             .enter().append('line')
             .attr('stroke-width', 1) // Reduced stroke width for links
             .attr('stroke', '#999');
@@ -109,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const node = svg.append('g')
             .attr('class', 'nodes')
             .selectAll('circle')
-            .data(topNodes)
+            .data(filteredNodes)
             .enter().append('circle')
             .attr('r', d => citationScale(d.citationCount))
             .attr('fill', d => colorScale(d.citationCount))
@@ -124,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const label = svg.append('g')
             .selectAll('text')
-            .data(topNodes)
+            .data(filteredNodes)
             .enter().append('text')
             .attr('dy', '.35em') // Center vertically on the node
             .attr('text-anchor', 'middle')
@@ -193,6 +203,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         sliderInput.addEventListener('input', () => {
             sliderValue.textContent = sliderInput.value;
+            const event = new CustomEvent('updateGraph', { detail: { minCitations: parseInt(sliderInput.value) } });
+            document.dispatchEvent(event);
             updateSliderSpanPosition(sliderInput.value, minCitations, maxCitations);
         });
 
