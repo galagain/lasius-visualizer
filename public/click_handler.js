@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let svg = graphContainer.append('svg')
         .attr('width', width)
         .attr('height', height)
+        .attr('viewBox', [0, 0, width, height])
         .call(d3.zoom().on("zoom", function (event) {
             svg.attr("transform", event.transform);
         }))
@@ -45,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function displayPaperTitles(nodes, sortByCitations = true) {
-        // Sort nodes by citation count or publication date
         if (sortByCitations) {
             nodes.sort((a, b) => b.citationCount - a.citationCount);
         } else {
@@ -86,18 +86,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const topNodeIds = new Set(topNodes.map(node => node.paperId));
         const topLinks = data.links.filter(link => topNodeIds.has(link.source) && topNodeIds.has(link.target));
 
-        const minDate = d3.min(topNodes, d => new Date(d.publicationDate));
-        const maxDate = d3.max(topNodes, d => new Date(d.publicationDate));
-        const dateScale = d3.scaleTime()
-            .domain([minDate, maxDate])
-            .range([3, 30]); // Increased range for radii to accentuate size differences
+        const citationScale = d3.scaleSqrt()
+            .domain([0, d3.max(topNodes, d => d.citationCount)])
+            .range([10, 30]); // Adjusted range for node sizes
 
-        const colorScale = d3.scaleSequential(d3.interpolateRdYlBu)
-            .domain([maxDate, minDate]); // Reverse the domain for better color distinction
+        const colorScale = d3.scaleSequential(d3.interpolateCool)
+            .domain([0, d3.max(topNodes, d => d.citationCount)]); // Adjust color scale domain
 
         const simulation = d3.forceSimulation(topNodes)
-            .force('link', d3.forceLink(topLinks).id(d => d.paperId).distance(200))
-            .force('charge', d3.forceManyBody().strength(-300))
+            .force('link', d3.forceLink(topLinks).id(d => d.paperId).distance(200)) // Increased distance for links
+            .force('charge', d3.forceManyBody().strength(-500)) // Increased repulsion for nodes
             .force('center', d3.forceCenter(width / 2, height / 2));
 
         const link = svg.append('g')
@@ -105,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .selectAll('line')
             .data(topLinks)
             .enter().append('line')
-            .attr('stroke-width', 2)
+            .attr('stroke-width', 1) // Reduced stroke width for links
             .attr('stroke', '#999');
 
         const node = svg.append('g')
@@ -113,17 +111,31 @@ document.addEventListener('DOMContentLoaded', () => {
             .selectAll('circle')
             .data(topNodes)
             .enter().append('circle')
-            .attr('r', d => dateScale(new Date(d.publicationDate)))
-            .attr('fill', d => colorScale(new Date(d.publicationDate)))
-            .attr('stroke', '#333')
+            .attr('r', d => citationScale(d.citationCount))
+            .attr('fill', d => colorScale(d.citationCount))
+            .attr('stroke', '#fff')
             .attr('stroke-width', 1.5)
             .call(d3.drag()
                 .on('start', dragstarted)
                 .on('drag', dragged)
-                .on('end', dragended));
+                .on('end', dragended))
+            .on('mouseover', handleMouseOver)
+            .on('mouseout', handleMouseOut);
 
-        node.append('title')
-            .text(d => d.title);
+        const label = svg.append('g')
+            .selectAll('text')
+            .data(topNodes)
+            .enter().append('text')
+            .attr('dy', '.35em') // Center vertically on the node
+            .attr('text-anchor', 'middle')
+            .attr('fill', '#fff')
+            .attr('pointer-events', 'none')
+            .style('text-shadow', `
+                -2px -2px 4px rgba(0, 0, 0, 0.8),
+                 2px -2px 4px rgba(0, 0, 0, 0.8),
+                -2px  2px 4px rgba(0, 0, 0, 0.8),
+                 2px  2px 4px rgba(0, 0, 0, 0.8)`)
+            .text(d => `[${new Date(d.publicationDate).getFullYear()}] ${d.title.split(' ')[0]}`); // Display date and first word
 
         simulation.on('tick', () => {
             link
@@ -135,6 +147,10 @@ document.addEventListener('DOMContentLoaded', () => {
             node
                 .attr('cx', d => d.x)
                 .attr('cy', d => d.y);
+
+            label
+                .attr('x', d => d.x)
+                .attr('y', d => d.y); // Center text on the node
         });
 
         function dragstarted(event, d) {
@@ -153,6 +169,14 @@ document.addEventListener('DOMContentLoaded', () => {
             d.fx = null;
             d.fy = null;
         }
+
+        function handleMouseOver(event, d) {
+            d3.select(this).append('title').text(d.title); // Show full title on hover
+        }
+
+        function handleMouseOut(event, d) {
+            d3.select(this).select('title').remove(); // Remove title on mouse out
+        }
     }
 
     function updateSlider(data) {
@@ -160,28 +184,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const minCitations = Math.min(...citations);
         const maxCitations = Math.max(...citations);
 
-        // Update slider min and max
         sliderInput.min = minCitations;
         sliderInput.max = maxCitations;
 
-        // Set initial value to 75% of the max citations
         const initialValue = Math.round(maxCitations * 0.75);
         sliderInput.value = initialValue;
         sliderValue.textContent = initialValue;
 
-        // Add event listener to update value display and position on input change
         sliderInput.addEventListener('input', () => {
             sliderValue.textContent = sliderInput.value;
             updateSliderSpanPosition(sliderInput.value, minCitations, maxCitations);
         });
 
-        // Ensure initial position is correct
         updateSliderSpanPosition(initialValue, minCitations, maxCitations);
     }
 
     function updateSliderSpanPosition(value, min, max) {
         const percentage = (value - min) / (max - min) * 100;
-        sliderSpan.style.left = `calc(${percentage}%`; // Adjust position relative to the slider
-        sliderSpan.style.transform = 'translateX(-50%)'; // Center the span
+        sliderSpan.style.left = `calc(${percentage}%)`;
     }
 });
