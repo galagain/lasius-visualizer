@@ -244,8 +244,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function highlightLinks(node) {
-        svg.selectAll('line').attr('stroke', link =>
-            link.source.paperId === node.paperId || link.target.paperId === node.paperId ? 'red' : '#999'
-        );
+        svg.selectAll('line').attr('stroke', link => {
+            if (link.source.paperId === node.paperId) {
+                return 'red'; // Outgoing links (citations)
+            } else if (link.target.paperId === node.paperId) {
+                return 'green'; // Incoming links (references)
+            } else {
+                return '#999'; // Default link color
+            }
+        });
     }
 });
