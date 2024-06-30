@@ -157,7 +157,14 @@ document.addEventListener('DOMContentLoaded', () => {
                  2px -2px 4px rgba(0, 0, 0, 0.8),
                 -2px  2px 4px rgba(0, 0, 0, 0.8),
                  2px  2px 4px rgba(0, 0, 0, 0.8)`)
-            .text(d => `[${new Date(d.publicationDate).getFullYear()}] ${d.title.split(' ')[0]}`); // Display date and first word
+            .text(d => {
+                if (d.publicationDate) {
+                    const year = new Date(d.publicationDate).getFullYear();
+                    return `[${year}] ${d.title.split(' ')[0]}`;
+                } else {
+                    return `${d.title.split(' ')[0]}`;
+                }
+            }); // Display date and first word if date is not null
 
         simulation.on('tick', () => {
             link
