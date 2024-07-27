@@ -219,7 +219,21 @@ document.addEventListener("DOMContentLoaded", () => {
           .on("end", dragended)
       );
 
-    // Removed label creation and updating
+    // Add text elements for the publication year
+    const text = svg
+      .append("g")
+      .attr("class", "labels")
+      .selectAll("text")
+      .data(filteredPapers)
+      .enter()
+      .append("text")
+      .attr("dy", ".35em")
+      .attr("text-anchor", "middle")
+      .attr("fill", "#fff")
+      .attr("pointer-events", "none")
+      .style("font-size", "10px")
+      .style("text-shadow", "0 0 10px rgba(0, 0, 0, 1)") // Add text shadow
+      .text((d) => new Date(d.publicationDate).getFullYear());
 
     simulation.on("tick", () => {
       link
@@ -229,6 +243,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("y2", (d) => d.target.y);
 
       node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
+
+      text.attr("x", (d) => d.x).attr("y", (d) => d.y);
     });
 
     function dragstarted(event, d) {
@@ -253,7 +269,6 @@ document.addEventListener("DOMContentLoaded", () => {
     sliderInput.min = 0;
     sliderInput.max = citationValues.length - 1;
     sliderInput.step = 1;
-
     const initialIndex = Math.floor(citationValues.length * 0.75);
     sliderInput.value = initialIndex;
     sliderValue.textContent = citationValues[initialIndex];
