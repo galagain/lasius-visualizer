@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
           .on("end", dragended)
       );
 
-    // Add text elements for the publication year
+    // Add text elements for the first author's last name and publication year
     const text = svg
       .append("g")
       .attr("class", "labels")
@@ -233,7 +233,12 @@ document.addEventListener("DOMContentLoaded", () => {
       .attr("pointer-events", "none")
       .style("font-size", "10px")
       .style("text-shadow", "0 0 10px rgba(0, 0, 0, 1)") // Add text shadow
-      .text((d) => new Date(d.publicationDate).getFullYear());
+      .text((d) => {
+        const firstAuthorId = d.authorIds[0];
+        const firstAuthor = data.authors[firstAuthorId];
+        const year = new Date(d.publicationDate).getFullYear();
+        return `${firstAuthor.split(" ").pop()} ${year}`;
+      });
 
     simulation.on("tick", () => {
       link
