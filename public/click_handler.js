@@ -231,8 +231,8 @@ document.addEventListener("DOMContentLoaded", () => {
       .attr("text-anchor", "middle")
       .attr("fill", "#fff")
       .attr("pointer-events", "none")
-      .style("font-size", "10px")
-      .style("text-shadow", "0 0 10px rgba(0, 0, 0, 1)") // Add text shadow
+      .style("font-size", "0.7rem")
+      .style("text-shadow", "0 0 1rem rgba(0, 0, 0, 1)") // Add text shadow
       .text((d) => {
         const firstAuthorId = d.authorIds[0];
         const firstAuthor = data.authors[firstAuthorId];

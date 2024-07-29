@@ -254,11 +254,3 @@ button:active {
   width: 100%; /* Set the width of the slider input to 100% */
   margin-top: 30px; /* Space between the slider and the span */
 }
-
-/* Styling for the text labels on circles */
-.labels text {
-  text-shadow: 0 0 5px rgba(0, 0, 0, 0.7); /* Add a shadow effect to the text */
-  font-size: 0.7rem; /* Adjust the font size if needed */
-  fill: #fff; /* Text color */
-  pointer-events: none; /* Prevent mouse events on the text */
-}
