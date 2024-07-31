@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const sliderContainer = document.getElementById("slider-container");
   let sortByCitations = true; // Default sorting by citations
   let citationValues = []; // To store unique citation counts
+  let clickedNode = null; // To store the clicked node
 
   const graphContainer = d3.select("#graph-container");
   const width = graphContainer.node().clientWidth;
@@ -27,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   graphContainer.call(zoom);
 
-  // Prevent slider clicks from propagating to the background
   sliderContainer.addEventListener("mousedown", (event) => {
     event.stopPropagation();
   });
@@ -155,7 +155,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateGraph(data, minCitations, papers) {
-    // Clear previous graph
     svg.selectAll("*").remove();
 
     const filteredPapers = papers.filter(
@@ -217,9 +216,11 @@ document.addEventListener("DOMContentLoaded", () => {
           .on("start", dragstarted)
           .on("drag", dragged)
           .on("end", dragended)
-      );
+      )
+      .on("click", function (event, d) {
+        handleNodeClick(d3.select(this));
+      });
 
-    // Add text elements for the first author's last name and publication year
     const text = svg
       .append("g")
       .attr("class", "labels")
@@ -270,6 +271,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function handleNodeClick(selectedNode) {
+    if (clickedNode && clickedNode.node() === selectedNode.node()) {
+      // If the same node is clicked again, reset all nodes and texts
+      svg.selectAll("circle").style("opacity", 1);
+      svg.selectAll("text").style("opacity", 1);
+      clickedNode = null;
+    } else {
+      // If a different node is clicked, set all nodes to less visible except the clicked one
+      svg.selectAll("circle").style("opacity", 0.1);
+      svg.selectAll("text").style("opacity", 0.1);
+      selectedNode.style("opacity", 1);
+      svg
+        .selectAll("text")
+        .filter((d) => d === selectedNode.datum())
+        .style("opacity", 1);
+      clickedNode = selectedNode;
+    }
+  }
+
   function updateSlider(citationValues) {
     sliderInput.min = 0;
     sliderInput.max = citationValues.length - 1;
@@ -277,7 +297,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const initialIndex = Math.floor(citationValues.length * 0.75);
     sliderInput.value = initialIndex;
     sliderValue.textContent = citationValues[initialIndex];
-
     updateSliderSpanPosition(initialIndex, 0, citationValues.length - 1);
   }
 
