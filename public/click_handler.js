@@ -288,16 +288,33 @@ document.addEventListener("DOMContentLoaded", () => {
             link.target === selectedNode.datum()
         );
 
+      const relatedNodes = new Set();
+      relatedLinks.each(function (link) {
+        relatedNodes.add(link.source);
+        relatedNodes.add(link.target);
+      });
+
       svg.selectAll("circle").style("opacity", 0.1);
       svg.selectAll("line").style("opacity", 0.1);
       svg.selectAll("text").style("opacity", 0);
+
+      relatedNodes.forEach((node) => {
+        svg
+          .selectAll("circle")
+          .filter((d) => d === node)
+          .style("opacity", 1);
+        svg
+          .selectAll("text")
+          .filter((d) => d === node)
+          .style("opacity", 1);
+      });
+
       selectedNode.style("opacity", 1);
       relatedLinks.style("opacity", 1);
-      svg
-        .selectAll("text")
-        .filter((d) => d === selectedNode.datum())
-        .style("opacity", 1);
       clickedNode = selectedNode;
+
+      // Restart the simulation for better layout
+      simulation.alpha(1).restart();
     }
   }
 
