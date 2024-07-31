@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let sortByCitations = true; // Default sorting by citations
   let citationValues = []; // To store unique citation counts
   let clickedNode = null; // To store the clicked node
+  let activeQueries = new Set(); // To store active queries
 
   const graphContainer = d3.select("#graph-container");
   const width = graphContainer.node().clientWidth;
@@ -70,6 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // Display queries as buttons
           displayQueries(jsonData.queries);
+          // Set active queries
+          activeQueries = new Set(Object.keys(jsonData.queries));
         } catch (error) {
           alert("Error displaying paper titles or updating graph.");
         }
@@ -129,8 +132,66 @@ document.addEventListener("DOMContentLoaded", () => {
       const queryButton = document.createElement("button");
       queryButton.classList.add("query-button");
       queryButton.textContent = query;
+      queryButton.addEventListener("click", () => {
+        toggleQuery(query);
+      });
       queriesContainer.appendChild(queryButton);
+      activeQueries.add(query); // Add query to activeQueries by default
     });
+
+    // Initialize query button styles
+    updateQueryButtonStyles();
+  }
+
+  function toggleQuery(query) {
+    if (activeQueries.has(query)) {
+      if (activeQueries.size > 1) {
+        activeQueries.delete(query);
+      }
+    } else {
+      activeQueries.add(query);
+    }
+    updateQueryButtonStyles();
+    updateDisplayedPapers();
+  }
+
+  function updateQueryButtonStyles() {
+    queriesContainer.querySelectorAll(".query-button").forEach((button) => {
+      if (activeQueries.has(button.textContent)) {
+        button.classList.remove("inactive");
+      } else {
+        button.classList.add("inactive");
+      }
+    });
+  }
+
+  function updateDisplayedPapers() {
+    const jsonData = JSON.parse(
+      document.querySelector(".paper-button.active").dataset.json
+    );
+    const activePaperIds = new Set();
+    activeQueries.forEach((query) => {
+      const paperIds = jsonData.queries[query];
+      if (paperIds) {
+        paperIds.forEach((id) => activePaperIds.add(id));
+      }
+    });
+
+    const papers = jsonData.papers.filter((paper) =>
+      activePaperIds.has(paper.paperId)
+    );
+
+    displayPaperTitles(papers, sortByCitations);
+    citationValues = getUniqueCitationValues(papers);
+    updateSlider(citationValues);
+
+    const initialCitationValue =
+      citationValues[Math.floor(citationValues.length * 0.75)];
+    document.dispatchEvent(
+      new CustomEvent("updateGraph", {
+        detail: { jsonData, minCitations: initialCitationValue, papers },
+      })
+    );
   }
 
   function displayPaperTitles(papers, sortByCitations = true) {
