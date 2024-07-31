@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const sliderValue = document.getElementById("sliderValue");
   const sliderSpan = document.getElementById("slider-span");
   const sliderContainer = document.getElementById("slider-container");
+  const queriesContainer = document.getElementById("queries-container");
   let sortByCitations = true; // Default sorting by citations
   let citationValues = []; // To store unique citation counts
   let clickedNode = null; // To store the clicked node
@@ -66,6 +67,9 @@ document.addEventListener("DOMContentLoaded", () => {
               detail: { jsonData, minCitations: initialCitationValue, papers },
             })
           );
+
+          // Display queries as buttons
+          displayQueries(jsonData.queries);
         } catch (error) {
           alert("Error displaying paper titles or updating graph.");
         }
@@ -117,6 +121,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const jsonData = event.detail.jsonData;
     updateGraph(jsonData, event.detail.minCitations, event.detail.papers);
   });
+
+  function displayQueries(queries) {
+    queriesContainer.innerHTML = ""; // Clear previous queries
+
+    Object.keys(queries).forEach((query) => {
+      const queryButton = document.createElement("button");
+      queryButton.classList.add("query-button");
+      queryButton.textContent = query;
+      queriesContainer.appendChild(queryButton);
+    });
+  }
 
   function displayPaperTitles(papers, sortByCitations = true) {
     if (sortByCitations) {

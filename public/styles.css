@@ -254,3 +254,31 @@ button:active {
   width: 100%; /* Set the width of the slider input to 100% */
   margin-top: 30px; /* Space between the slider and the span */
 }
+
+#queries-container {
+  display: flex;
+  justify-content: center;
+  position: absolute; /* Use absolute positioning */
+  bottom: 100px; /* Position above the slider container */
+  width: 100%;
+  z-index: 10; /* Ensure it appears above other content */
+  pointer-events: none; /* Ensure the div itself doesn't block clicks */
+}
+
+.query-button {
+  margin: 0 5px; /* Adjust as needed for button spacing */
+  background: #28a745; /* Same background color as button container */
+  color: white;
+  border: 1px solid #28a745; /* Button border */
+  padding: 5px 10px; /* Button padding */
+  cursor: pointer;
+  pointer-events: all; /* Ensure the buttons are clickable */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for floating effect */
+  border-radius: 5px; /* Rounded corners for a nicer look */
+  transition: transform 0.2s; /* Smooth transform transition */
+}
+
+.query-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+  transform: translateY(-2px); /* Lift the button slightly on hover */
+}
