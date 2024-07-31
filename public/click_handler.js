@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const sliderSpan = document.getElementById("slider-span");
   const sliderContainer = document.getElementById("slider-container");
   const queriesContainer = document.getElementById("queries-container");
+  const papersCount = document.getElementById("papers-count");
   let sortByCitations = true; // Default sorting by citations
   let citationValues = []; // To store unique citation counts
   let clickedNode = null; // To store the clicked node
@@ -223,6 +224,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       titleList.appendChild(paperItem);
     });
+
+    // Update the papers count
+    papersCount.textContent = papers.length;
   }
 
   function getUniqueCitationValues(papers) {
