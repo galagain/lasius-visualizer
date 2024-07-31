@@ -266,19 +266,29 @@ button:active {
 }
 
 .query-button {
-  margin: 0 5px; /* Adjust as needed for button spacing */
-  background: #28a745; /* Same background color as button container */
+  margin: 5px 0; /* Vertical spacing between buttons */
+  background: #4caf50; /* Same background color as button container */
   color: white;
-  border: 1px solid #28a745; /* Button border */
+  border: 1px solid #4caf50; /* Button border */
   padding: 5px 10px; /* Button padding */
   cursor: pointer;
   pointer-events: all; /* Ensure the buttons are clickable */
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Add shadow for floating effect */
-  border-radius: 5px; /* Rounded corners for a nicer look */
-  transition: transform 0.2s; /* Smooth transform transition */
+  border-radius: 8px; /* Rounded corners for a nicer look */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+  opacity: 1; /* Fully opaque by default */
 }
 
 .query-button:hover {
   background-color: #45a049; /* Darker green on hover */
   transform: translateY(-2px); /* Lift the button slightly on hover */
+}
+
+.query-button:active {
+  background-color: #3e8e41; /* Even darker green when pressed */
+  transform: translateY(0); /* Reset lift on click */
+}
+
+.query-button.inactive {
+  opacity: 0.5; /* More transparent for inactive buttons */
 }
