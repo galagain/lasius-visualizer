@@ -273,15 +273,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function handleNodeClick(selectedNode) {
     if (clickedNode && clickedNode.node() === selectedNode.node()) {
-      // If the same node is clicked again, reset all nodes and texts
+      // If the same node is clicked again, reset all nodes, links, and texts
       svg.selectAll("circle").style("opacity", 1);
+      svg.selectAll("line").style("opacity", 1);
       svg.selectAll("text").style("opacity", 1);
       clickedNode = null;
     } else {
-      // If a different node is clicked, set all nodes to less visible except the clicked one
+      // If a different node is clicked, set all nodes, links, and texts to less visible except the clicked one
+      const relatedLinks = svg
+        .selectAll("line")
+        .filter(
+          (link) =>
+            link.source === selectedNode.datum() ||
+            link.target === selectedNode.datum()
+        );
+
       svg.selectAll("circle").style("opacity", 0.1);
-      svg.selectAll("text").style("opacity", 0.1);
+      svg.selectAll("line").style("opacity", 0.1);
+      svg.selectAll("text").style("opacity", 0);
       selectedNode.style("opacity", 1);
+      relatedLinks.style("opacity", 1);
       svg
         .selectAll("text")
         .filter((d) => d === selectedNode.datum())
