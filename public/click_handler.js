@@ -109,9 +109,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const jsonData = JSON.parse(
       document.querySelector(".paper-button.active").dataset.json
     );
-    const paperIds = new Set(Object.values(jsonData.queries).flat());
+    const activePaperIds = getActivePaperIds(jsonData); // Use active queries to get papers
     const papers = jsonData.papers.filter((paper) =>
-      paperIds.has(paper.paperId)
+      activePaperIds.has(paper.paperId)
     );
     document.dispatchEvent(
       new CustomEvent("updateGraph", {
@@ -170,14 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const jsonData = JSON.parse(
       document.querySelector(".paper-button.active").dataset.json
     );
-    const activePaperIds = new Set();
-    activeQueries.forEach((query) => {
-      const paperIds = jsonData.queries[query];
-      if (paperIds) {
-        paperIds.forEach((id) => activePaperIds.add(id));
-      }
-    });
-
+    const activePaperIds = getActivePaperIds(jsonData);
     const papers = jsonData.papers.filter((paper) =>
       activePaperIds.has(paper.paperId)
     );
@@ -411,5 +404,17 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateSliderSpanPosition(index, minIndex, maxIndex) {
     const percentage = ((index - minIndex) / (maxIndex - minIndex)) * 100;
     sliderSpan.style.left = `calc(${percentage}%)`;
+  }
+
+  function getActivePaperIds(jsonData) {
+    // Collect all paper IDs from active queries
+    const activePaperIds = new Set();
+    activeQueries.forEach((query) => {
+      const paperIds = jsonData.queries[query];
+      if (paperIds) {
+        paperIds.forEach((id) => activePaperIds.add(id));
+      }
+    });
+    return activePaperIds;
   }
 });
