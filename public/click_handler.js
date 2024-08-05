@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // DOM Elements
   const titleList = document.getElementById("title-list");
   const sortButton = document.getElementById("sort-button");
   const sliderInput = document.getElementById("sliderInput");
@@ -7,6 +8,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const sliderContainer = document.getElementById("slider-container");
   const queriesContainer = document.getElementById("queries-container");
   const papersCount = document.getElementById("papers-count");
+  const paperDetails = document.getElementById("paper-details"); // Add this for paper details
+
+  // State Variables
   let sortByCitations = true; // Default sorting by citations
   let citationValues = []; // To store unique citation counts
   let clickedNode = null; // To store the clicked node
@@ -31,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   graphContainer.call(zoom);
 
+  // Prevent slider interactions from triggering zoom
   sliderContainer.addEventListener("mousedown", (event) => {
     event.stopPropagation();
   });
@@ -227,6 +232,9 @@ document.addEventListener("DOMContentLoaded", () => {
     return [...new Set(citationCounts)].sort((a, b) => a - b);
   }
 
+  // Declare simulation at the top level to be accessible in handleNodeClick
+  let simulation;
+
   function updateGraph(data, minCitations, papers) {
     svg.selectAll("*").remove();
 
@@ -250,7 +258,8 @@ document.addEventListener("DOMContentLoaded", () => {
       .scaleSequential(d3.interpolateCool)
       .domain([0, d3.max(filteredPapers, (d) => d.citationCount)]);
 
-    const simulation = d3
+    // Initialize simulation within the updateGraph function
+    simulation = d3
       .forceSimulation(filteredPapers)
       .force(
         "link",
@@ -291,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
           .on("end", dragended)
       )
       .on("click", function (event, d) {
-        handleNodeClick(d3.select(this));
+        handleNodeClick(d3.select(this), d); // Pass node data
       });
 
     const text = svg
@@ -344,13 +353,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function handleNodeClick(selectedNode) {
+  function handleNodeClick(selectedNode, nodeData) {
     if (clickedNode && clickedNode.node() === selectedNode.node()) {
       // If the same node is clicked again, reset all nodes, links, and texts
       svg.selectAll("circle").style("opacity", 1);
       svg.selectAll("line").style("opacity", 1);
       svg.selectAll("text").style("opacity", 1);
       clickedNode = null;
+      paperDetails.textContent =
+        "Cliquez sur un papier pour afficher son nom ici."; // Reset the text
     } else {
       // If a different node is clicked, set all nodes, links, and texts to less visible except the clicked one
       const relatedLinks = svg
@@ -388,6 +399,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Restart the simulation for better layout
       simulation.alpha(1).restart();
+
+      // Update paper details with the title of the clicked node
+      paperDetails.textContent = `Titre: ${nodeData.title}`; // Ensure nodeData has a title property
     }
   }
 
