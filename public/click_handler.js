@@ -10,8 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const papersCount = document.getElementById("papers-count");
   const paperDetailsContainer = document.getElementById(
     "paper-details-container"
-  ); // Container for paper details
-  const paperDetails = document.getElementById("paper-details"); // Content area within the container
+  );
+  const paperDetails = document.getElementById("paper-details");
 
   // State Variables
   let sortByCitations = true; // Default sorting by citations
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const zoom = d3
     .zoom()
-    .scaleExtent([0.5, 10])
+    .scaleExtent([0.01, 100]) // Allow infinite zoom in and out
     .on("zoom", (event) => {
       svg.attr("transform", event.transform);
     });
@@ -325,10 +325,15 @@ document.addEventListener("DOMContentLoaded", () => {
       .style("font-size", "0.7rem")
       .style("text-shadow", "0 0 1rem rgba(0, 0, 0, 1)") // Add text shadow
       .text((d) => {
+        // Ensure author information is available
         const firstAuthorId = d.authorIds[0];
-        const firstAuthor = data.authors[firstAuthorId];
+        const firstAuthor = data.authors[firstAuthorId] || "Unknown";
         const year = new Date(d.publicationDate).getFullYear();
-        return `${firstAuthor.split(" ").pop()} ${year}`;
+
+        // Only split if firstAuthor is a string
+        return typeof firstAuthor === "string"
+          ? `${firstAuthor.split(" ").pop()} ${year}`
+          : `${firstAuthor} ${year}`;
       });
 
     simulation.on("tick", () => {
