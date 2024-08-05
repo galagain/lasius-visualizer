@@ -304,25 +304,28 @@ button:active {
   transform: translateY(-50%); /* Adjust for perfect vertical centering */
   width: 25vw;
   height: 50vh;
-  display: flex;
+  display: none; /* Start as hidden */
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Align content to the start (top) */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border: 2px solid #4caf50; /* Added border for visibility */
   z-index: 1000;
 }
 
+#paper-details-container.visible {
+  display: flex; /* Show when the visible class is added */
+}
+
 #paper-details-container h2 {
-  margin: 0 0 1rem 0; /* Remove default margin and add bottom margin */
-  align-self: stretch; /* Make the h2 stretch the full width */
-  text-align: center; /* Center the text horizontally */
+  margin: 0 0 1rem 0;
+  align-self: stretch;
+  text-align: center;
 }
 
 #paper-details {
-  flex-grow: 1; /* Allow paper details to take the remaining space */
+  flex-grow: 1;
   display: flex;
   justify-content: center;
-  align-items: center; /* Center the paper details content */
-  text-align: center; /* Center text inside the content area */
+  align-items: center;
+  text-align: center;
 }

@@ -8,7 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const sliderContainer = document.getElementById("slider-container");
   const queriesContainer = document.getElementById("queries-container");
   const papersCount = document.getElementById("papers-count");
-  const paperDetails = document.getElementById("paper-details"); // Add this for paper details
+  const paperDetailsContainer = document.getElementById(
+    "paper-details-container"
+  ); // The container for paper details
+  const paperDetails = document.getElementById("paper-details"); // The content area within the container
 
   // State Variables
   let sortByCitations = true; // Default sorting by citations
@@ -362,6 +365,7 @@ document.addEventListener("DOMContentLoaded", () => {
       clickedNode = null;
       paperDetails.textContent =
         "Cliquez sur un papier pour afficher son nom ici."; // Reset the text
+      paperDetailsContainer.classList.remove("visible"); // Hide the container
     } else {
       // If a different node is clicked, set all nodes, links, and texts to less visible except the clicked one
       const relatedLinks = svg
@@ -402,6 +406,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Update paper details with the title of the clicked node
       paperDetails.textContent = `Titre: ${nodeData.title}`; // Ensure nodeData has a title property
+      paperDetailsContainer.classList.add("visible"); // Show the container
     }
   }
 
