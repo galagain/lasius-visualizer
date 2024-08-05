@@ -10,8 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const papersCount = document.getElementById("papers-count");
   const paperDetailsContainer = document.getElementById(
     "paper-details-container"
-  ); // The container for paper details
-  const paperDetails = document.getElementById("paper-details"); // The content area within the container
+  ); // Container for paper details
+  const paperDetails = document.getElementById("paper-details"); // Content area within the container
 
   // State Variables
   let sortByCitations = true; // Default sorting by citations
@@ -132,6 +132,11 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("updateGraph", (event) => {
     const jsonData = event.detail.jsonData;
     updateGraph(jsonData, event.detail.minCitations, event.detail.papers);
+
+    // Hide the paper details container when the graph updates
+    paperDetailsContainer.classList.remove("visible");
+    paperDetails.textContent =
+      "Cliquez sur un papier pour afficher son nom ici."; // Reset the text
   });
 
   function displayQueries(queries) {
