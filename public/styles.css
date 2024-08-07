@@ -293,39 +293,27 @@ button:active {
   opacity: 0.5; /* More transparent for inactive buttons */
 }
 
-#paper-details-container {
-  background-color: #444; /* Slightly different shade for distinction */
-  color: #f8f9fa;
-  padding: 1rem;
-  border-radius: 8px;
-  position: absolute; /* Position relative to the graph container */
-  top: 50%; /* Center vertically */
-  right: 0;
-  transform: translateY(-50%); /* Adjust for perfect vertical centering */
-  width: 25vw;
-  height: 50vh;
-  display: none; /* Start as hidden */
-  flex-direction: column;
-  align-items: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: 2px solid #4caf50; /* Added border for visibility */
-  z-index: 1000;
+.tooltip {
+  position: absolute;
+  display: none; /* Hidden by default */
+  background-color: rgba(0, 0, 0, 0.8); /* Dark background for contrast */
+  color: #f8f9fa; /* Light text color */
+  padding: 10px; /* Padding inside the tooltip */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+  z-index: 1001; /* Above other elements */
+  max-width: 300px; /* Max width for readability */
+  pointer-events: none; /* Ignore mouse events */
+  transition: opacity 0.3s ease; /* Smooth fade */
 }
 
-#paper-details-container.visible {
-  display: flex; /* Show when the visible class is added */
+.tooltip h3 {
+  margin: 0 0 10px 0; /* Spacing for the title */
+  font-size: 1rem; /* Slightly larger title */
+  color: #4caf50; /* Highlight color for title */
 }
 
-#paper-details-container h2 {
-  margin: 0 0 1rem 0;
-  align-self: stretch;
-  text-align: center;
-}
-
-#paper-details {
-  flex-grow: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+.tooltip p {
+  margin: 0; /* No margin for paragraphs */
+  font-size: 0.8rem; /* Smaller text */
 }

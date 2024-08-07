@@ -8,16 +8,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const sliderContainer = document.getElementById("slider-container");
   const queriesContainer = document.getElementById("queries-container");
   const papersCount = document.getElementById("papers-count");
-  const paperDetailsContainer = document.getElementById(
-    "paper-details-container"
-  );
-  const paperDetails = document.getElementById("paper-details");
+  const nodeTooltip = document.getElementById("node-tooltip"); // Tooltip element
 
   // State Variables
   let sortByCitations = true; // Default sorting by citations
   let citationValues = []; // To store unique citation counts
   let clickedNode = null; // To store the clicked node
   let activeQueries = new Set(); // To store active queries
+  let currentTransform = d3.zoomIdentity; // To track current zoom/pan transform
 
   const graphContainer = d3.select("#graph-container");
   const width = graphContainer.node().clientWidth;
@@ -33,7 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
     .zoom()
     .scaleExtent([0.01, 100]) // Allow infinite zoom in and out
     .on("zoom", (event) => {
-      svg.attr("transform", event.transform);
+      currentTransform = event.transform;
+      svg.attr("transform", currentTransform);
+      if (clickedNode) updateTooltipPosition(clickedNode.datum());
     });
 
   graphContainer.call(zoom);
@@ -133,10 +133,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const jsonData = event.detail.jsonData;
     updateGraph(jsonData, event.detail.minCitations, event.detail.papers);
 
-    // Hide the paper details container when the graph updates
-    paperDetailsContainer.classList.remove("visible");
-    paperDetails.textContent =
-      "Cliquez sur un papier pour afficher son nom ici."; // Reset the text
+    // Hide the tooltip when the graph updates
+    nodeTooltip.style.display = "none";
+    nodeTooltip.innerHTML = "Cliquez sur un papier pour afficher son nom ici."; // Reset the text
   });
 
   function displayQueries(queries) {
@@ -308,7 +307,7 @@ document.addEventListener("DOMContentLoaded", () => {
           .on("end", dragended)
       )
       .on("click", function (event, d) {
-        handleNodeClick(d3.select(this), d); // Pass node data
+        handleNodeClick(d3.select(this), d, data); // Pass node data
       });
 
     const text = svg
@@ -346,6 +345,11 @@ document.addEventListener("DOMContentLoaded", () => {
       node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
 
       text.attr("x", (d) => d.x).attr("y", (d) => d.y);
+
+      // Update tooltip position to follow the clicked node
+      if (clickedNode) {
+        updateTooltipPosition(clickedNode.datum());
+      }
     });
 
     function dragstarted(event, d) {
@@ -366,16 +370,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function handleNodeClick(selectedNode, nodeData) {
+  function handleNodeClick(selectedNode, nodeData, graphData) {
     if (clickedNode && clickedNode.node() === selectedNode.node()) {
       // If the same node is clicked again, reset all nodes, links, and texts
       svg.selectAll("circle").style("opacity", 1);
       svg.selectAll("line").style("opacity", 1);
       svg.selectAll("text").style("opacity", 1);
       clickedNode = null;
-      paperDetails.textContent =
-        "Cliquez sur un papier pour afficher son nom ici."; // Reset the text
-      paperDetailsContainer.classList.remove("visible"); // Hide the container
+      nodeTooltip.style.display = "none"; // Hide the tooltip
     } else {
       // If a different node is clicked, set all nodes, links, and texts to less visible except the clicked one
       const relatedLinks = svg
@@ -414,10 +416,61 @@ document.addEventListener("DOMContentLoaded", () => {
       // Restart the simulation for better layout
       simulation.alpha(1).restart();
 
-      // Update paper details with the title of the clicked node
-      paperDetails.textContent = `Titre: ${nodeData.title}`; // Ensure nodeData has a title property
-      paperDetailsContainer.classList.add("visible"); // Show the container
+      // Show and update tooltip with details of the clicked node
+      displayTooltip(nodeData, graphData.authors);
+      updateTooltipPosition(nodeData);
     }
+  }
+
+  function displayTooltip(paperData, authorsData) {
+    const authorsList = paperData.authorIds
+      .map((authorId) => authorsData[authorId] || "Unknown Author")
+      .join(", ");
+
+    const tooltipHTML = `
+            <h3>${paperData.title}</h3>
+            <p><strong>${authorsList}</strong></p>
+            <br>
+            <div style="display: flex; justify-content: space-between; width: 100%;">
+              <span>${new Date(
+                paperData.publicationDate
+              ).toLocaleDateString()}</span>
+              <span>${paperData.citationCount}</span>
+            </div>
+        `;
+
+    nodeTooltip.innerHTML = tooltipHTML;
+    nodeTooltip.style.display = "block";
+  }
+
+  function updateTooltipPosition(nodeData) {
+    if (!nodeData) return;
+
+    const transformed = currentTransform.apply([nodeData.x, nodeData.y]);
+
+    const tooltipWidth = nodeTooltip.offsetWidth;
+    const tooltipHeight = nodeTooltip.offsetHeight;
+    const containerRect = graphContainer.node().getBoundingClientRect();
+    const offsetX = 10; // Horizontal offset from the node
+    const offsetY = -10; // Vertical offset from the node
+
+    // Calculate the tooltip's position
+    let left = transformed[0] + containerRect.left + offsetX;
+    let top = transformed[1] + containerRect.top + offsetY - tooltipHeight;
+
+    // Ensure the tooltip doesn't go out of bounds
+    left = Math.max(
+      containerRect.left,
+      Math.min(left, containerRect.right - tooltipWidth)
+    );
+    top = Math.max(
+      containerRect.top,
+      Math.min(top, containerRect.bottom - tooltipHeight)
+    );
+
+    nodeTooltip.style.left = `${left}px`;
+    nodeTooltip.style.top = `${top}px`;
+    nodeTooltip.style.pointerEvents = "none"; // Allow clicks to pass through
   }
 
   function updateSlider(citationValues) {
