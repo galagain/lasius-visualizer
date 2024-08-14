@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const queriesContainer = document.getElementById("queries-container");
   const papersCount = document.getElementById("papers-count");
   const nodeTooltip = document.getElementById("node-tooltip"); // Tooltip element
+  const toggleDepthButton = document.getElementById("toggle-depth-button");
 
   // State Variables
   let sortByCitations = true; // Default sorting by citations
@@ -45,6 +46,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   sliderContainer.addEventListener("mouseup", (event) => {
     event.stopPropagation();
+  });
+
+  toggleDepthButton.addEventListener("click", () => {
+    if (toggleDepthButton.textContent.includes("Depth 1")) {
+      toggleDepthButton.textContent = "Switch to Depth 0";
+    } else {
+      toggleDepthButton.textContent = "Switch to Depth 1";
+    }
   });
 
   document
