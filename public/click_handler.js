@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let clickedNode = null; // To store the clicked node
   let activeQueries = new Set(); // To store active queries
   let currentTransform = d3.zoomIdentity; // To track current zoom/pan transform
+  let currentDepth = 0; // Default mode is 0
 
   const graphContainer = d3.select("#graph-container");
   const width = graphContainer.node().clientWidth;
@@ -49,11 +50,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   toggleDepthButton.addEventListener("click", () => {
-    if (toggleDepthButton.textContent.includes("Depth 1")) {
+    if (currentDepth === 0) {
+      currentDepth = 1;
       toggleDepthButton.textContent = "Switch to Depth 0";
     } else {
+      currentDepth = 0;
       toggleDepthButton.textContent = "Switch to Depth 1";
     }
+    updateDisplayedPapers();
   });
 
   document
@@ -65,9 +69,11 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
         try {
           const jsonData = JSON.parse(event.target.dataset.json);
-          const paperIds = new Set(Object.values(jsonData.queries).flat());
-          const papers = jsonData.papers.filter((paper) =>
-            paperIds.has(paper.paperId)
+          const queriesSource =
+            currentDepth === 0 ? jsonData.queries : jsonData.queries_more;
+          const paperIds = new Set(Object.values(queriesSource).flat());
+          const papers = removeDuplicatePapers(
+            jsonData.papers.filter((paper) => paperIds.has(paper.paperId))
           );
           displayPaperTitles(papers, sortByCitations);
           citationValues = getUniqueCitationValues(papers);
@@ -88,9 +94,9 @@ document.addEventListener("DOMContentLoaded", () => {
           );
 
           // Display queries as buttons
-          displayQueries(jsonData.queries);
+          displayQueries(queriesSource);
           // Set active queries
-          activeQueries = new Set(Object.keys(jsonData.queries));
+          activeQueries = new Set(Object.keys(queriesSource));
         } catch (error) {
           alert("Error displaying paper titles or updating graph.");
         }
@@ -113,8 +119,8 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelector(".paper-button.active").dataset.json
     );
     const paperIds = new Set(Object.values(jsonData.queries).flat());
-    const papers = jsonData.papers.filter((paper) =>
-      paperIds.has(paper.paperId)
+    const papers = removeDuplicatePapers(
+      jsonData.papers.filter((paper) => paperIds.has(paper.paperId))
     );
     displayPaperTitles(papers, event.detail.sortByCitations);
   });
@@ -127,8 +133,8 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelector(".paper-button.active").dataset.json
     );
     const activePaperIds = getActivePaperIds(jsonData); // Use active queries to get papers
-    const papers = jsonData.papers.filter((paper) =>
-      activePaperIds.has(paper.paperId)
+    const papers = removeDuplicatePapers(
+      jsonData.papers.filter((paper) => activePaperIds.has(paper.paperId))
     );
     document.dispatchEvent(
       new CustomEvent("updateGraph", {
@@ -192,8 +198,8 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelector(".paper-button.active").dataset.json
     );
     const activePaperIds = getActivePaperIds(jsonData);
-    const papers = jsonData.papers.filter((paper) =>
-      activePaperIds.has(paper.paperId)
+    const papers = removeDuplicatePapers(
+      jsonData.papers.filter((paper) => activePaperIds.has(paper.paperId))
     );
 
     displayPaperTitles(papers, sortByCitations);
@@ -500,12 +506,29 @@ document.addEventListener("DOMContentLoaded", () => {
   function getActivePaperIds(jsonData) {
     // Collect all paper IDs from active queries
     const activePaperIds = new Set();
+
+    // Choice between queries and queries_more based on the current mode
+    const queriesSource =
+      currentDepth === 0 ? jsonData.queries : jsonData.queries_more;
+
     activeQueries.forEach((query) => {
-      const paperIds = jsonData.queries[query];
+      const paperIds = queriesSource[query];
       if (paperIds) {
         paperIds.forEach((id) => activePaperIds.add(id));
       }
     });
     return activePaperIds;
+  }
+
+  function removeDuplicatePapers(papers) {
+    const seen = new Set();
+    return papers.filter((paper) => {
+      if (seen.has(paper.paperId)) {
+        return false;
+      } else {
+        seen.add(paper.paperId);
+        return true;
+      }
+    });
   }
 });
