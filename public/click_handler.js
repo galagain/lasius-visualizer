@@ -21,7 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const graphContainer = d3.select("#graph-container");
   const width = graphContainer.node().clientWidth;
-  const height = graphContainer.node().clientHeight;
+  const height = graphContainer.node().getBoundingClientRect().height;
+
   let svg = graphContainer
     .append("svg")
     .attr("width", width)
@@ -108,21 +109,11 @@ document.addEventListener("DOMContentLoaded", () => {
     sortButton.textContent = sortByCitations
       ? "Sort by Date"
       : "Sort by Citations";
-    const event = new CustomEvent("sortPapers", {
-      detail: { sortByCitations },
-    });
-    document.dispatchEvent(event);
+    updateDisplayedPapers(); // Re-display papers with the new sorting criteria
   });
 
   document.addEventListener("sortPapers", (event) => {
-    const jsonData = JSON.parse(
-      document.querySelector(".paper-button.active").dataset.json
-    );
-    const paperIds = new Set(Object.values(jsonData.queries).flat());
-    const papers = removeDuplicatePapers(
-      jsonData.papers.filter((paper) => paperIds.has(paper.paperId))
-    );
-    displayPaperTitles(papers, event.detail.sortByCitations);
+    updateDisplayedPapers();
   });
 
   sliderInput.addEventListener("input", () => {
