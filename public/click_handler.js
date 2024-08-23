@@ -241,7 +241,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function getUniqueCitationValues(papers) {
-    const citationCounts = papers.map((paper) => paper.citationCount);
+    const citationCounts = papers.map((paper) => {
+      return paper.citationCount != null ? paper.citationCount : 0; // Replace null/undefined with 0
+    });
     return [...new Set(citationCounts)].sort((a, b) => a - b);
   }
 
@@ -262,6 +264,10 @@ document.addEventListener("DOMContentLoaded", () => {
         filteredPaperIds.has(link.source) && filteredPaperIds.has(link.target)
     );
 
+    const validLinks = filteredLinks.filter(
+      (link) => link.source && link.target
+    );
+
     const citationScale = d3
       .scaleSqrt()
       .domain([0, d3.max(filteredPapers, (d) => d.citationCount)])
@@ -277,7 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .force(
         "link",
         d3
-          .forceLink(filteredLinks)
+          .forceLink(validLinks)
           .id((d) => d.paperId)
           .distance(200)
       )
@@ -288,7 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .append("g")
       .attr("class", "links")
       .selectAll("line")
-      .data(filteredLinks)
+      .data(validLinks)
       .enter()
       .append("line")
       .attr("stroke-width", 1)
