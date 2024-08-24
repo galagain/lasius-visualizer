@@ -317,3 +317,10 @@ button:active {
   margin: 0; /* No margin for paragraphs */
   font-size: 0.8rem; /* Smaller text */
 }
+
+#toggle-depth-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000; /* Ensure it is above other elements */
+}
