@@ -256,9 +256,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const filteredPapers = papers.filter(
       (paper) => paper.citationCount >= minCitations
     );
+
     const filteredPaperIds = new Set(
       filteredPapers.map((paper) => paper.paperId)
     );
+
     const filteredLinks = data.links.filter(
       (link) =>
         filteredPaperIds.has(link.source) && filteredPaperIds.has(link.target)
@@ -271,13 +273,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const citationScale = d3
       .scaleSqrt()
       .domain([0, d3.max(filteredPapers, (d) => d.citationCount)])
-      .range([10, 30]);
+      .range([10, 60]);
 
-    const colorScale = d3
-      .scaleSequential(d3.interpolateCool)
-      .domain([0, d3.max(filteredPapers, (d) => d.citationCount)]);
+    const colorScaleBlue = d3
+      .scaleSequential()
+      .domain([0, d3.max(filteredPapers, (d) => d.citationCount)])
+      .interpolator(d3.interpolateRgb("blue", "pink")); // Interpolates between blue and pink
 
-    // Initialize simulation within the updateGraph function
+    const colorScaleGreen = d3
+      .scaleSequential()
+      .domain([0, d3.max(filteredPapers, (d) => d.citationCount)])
+      .interpolator(d3.interpolateRgb("green", "orange")); // Interpolates between green and orange
+
     simulation = d3
       .forceSimulation(filteredPapers)
       .force(
@@ -287,7 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
           .id((d) => d.paperId)
           .distance(200)
       )
-      .force("charge", d3.forceManyBody().strength(-500))
+      .force("charge", d3.forceManyBody().strength(-1000)) // Increase negative value for stronger repulsion
       .force("center", d3.forceCenter(width / 2, height / 2));
 
     const link = svg
@@ -308,7 +315,22 @@ document.addEventListener("DOMContentLoaded", () => {
       .enter()
       .append("circle")
       .attr("r", (d) => citationScale(d.citationCount))
-      .attr("fill", (d) => colorScale(d.citationCount))
+      .attr("fill", (d) => {
+        // Check if the paper is from queries or queries_more
+        const isInQueries = Object.values(data.queries).some((papers) =>
+          papers.includes(d.paperId)
+        );
+        const isInQueriesMore = Object.values(data.queries_more).some(
+          (papers) => papers.includes(d.paperId)
+        );
+
+        if (isInQueries) {
+          return colorScaleBlue(d.citationCount); // Papers from jsonData.queries in blue
+        } else if (isInQueriesMore) {
+          return colorScaleGreen(d.citationCount); // Papers from jsonData.queries_more in green
+        }
+        return "#ccc"; // Default color if not found in either
+      })
       .attr("stroke", "#fff")
       .attr("stroke-width", 1.5)
       .call(
@@ -319,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
           .on("end", dragended)
       )
       .on("click", function (event, d) {
-        handleNodeClick(d3.select(this), d, data); // Pass node data
+        handleNodeClick(d3.select(this), d, data);
       });
 
     const text = svg
@@ -334,9 +356,8 @@ document.addEventListener("DOMContentLoaded", () => {
       .attr("fill", "#fff")
       .attr("pointer-events", "none")
       .style("font-size", "0.7rem")
-      .style("text-shadow", "0 0 1rem rgba(0, 0, 0, 1)") // Add text shadow
+      .style("text-shadow", "0 0 1rem rgba(0, 0, 0, 1)")
       .text((d) => {
-        // Ensure author information is available
         const firstAuthorId = d.authorIds[0];
         const firstAuthor = data.authors[firstAuthorId] || "Unknown";
         const year = new Date(d.publicationDate).getFullYear();
