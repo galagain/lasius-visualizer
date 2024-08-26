@@ -329,3 +329,8 @@ button:active {
 .paper-item.inactive {
   opacity: 0.3;
 }
+
+.paper-item.selected {
+  box-shadow: 0 0 3vh #4caf50; /* Green shadow to highlight the selected paper */
+  transform: scale(1.05); /* Slightly larger size for selected paper */
+}

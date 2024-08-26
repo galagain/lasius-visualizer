@@ -411,7 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
       svg.selectAll("line").style("opacity", 1);
       svg.selectAll("text").style("opacity", 1);
       document.querySelectorAll(".paper-item").forEach((item) => {
-        item.classList.remove("inactive");
+        item.classList.remove("inactive", "selected"); // Remove both inactive and selected classes
       });
       clickedNode = null;
       nodeTooltip.style.display = "none"; // Hide the tooltip
@@ -422,6 +422,7 @@ document.addEventListener("DOMContentLoaded", () => {
       svg.selectAll("text").style("opacity", 0);
       document.querySelectorAll(".paper-item").forEach((item) => {
         item.classList.add("inactive");
+        item.classList.remove("selected"); // Remove the selected class from all items
       });
 
       // Highlight the selected node and its related nodes and links
@@ -460,6 +461,17 @@ document.addEventListener("DOMContentLoaded", () => {
       selectedNode.style("opacity", 1);
       relatedLinks.style("opacity", 1);
       clickedNode = selectedNode;
+
+      // Highlight the corresponding paper and scroll to it
+      const paperId = nodeData.paperId;
+      const paperItem = document.querySelector(
+        `.paper-item[data-paper-id="${paperId}"]`
+      );
+
+      if (paperItem) {
+        paperItem.classList.add("selected"); // Add selected class to highlight the paper with a shadow
+        paperItem.scrollIntoView({ behavior: "smooth", block: "center" }); // Scroll to the item
+      }
 
       // Show and update tooltip with details of the clicked node
       displayTooltip(nodeData, graphData.authors);
