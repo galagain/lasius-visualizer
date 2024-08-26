@@ -58,6 +58,7 @@ main {
   flex-direction: column; /* Vertical stack */
   align-items: center; /* Center items horizontally */
   justify-content: flex-start; /* Align items to the top */
+  box-shadow: 0 0 5vh rgba(0, 0, 0, 1); /* Adding the shadow */
 }
 
 #papers-list-container {
