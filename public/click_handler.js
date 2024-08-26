@@ -219,6 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
     papers.forEach((paper) => {
       const paperItem = document.createElement("div");
       paperItem.classList.add("paper-item");
+      paperItem.dataset.paperId = paper.paperId;
 
       const titleLink = document.createElement("a");
       titleLink.href = paper.url;
@@ -405,14 +406,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function handleNodeClick(selectedNode, nodeData, graphData) {
     if (clickedNode && clickedNode.node() === selectedNode.node()) {
-      // If the same node is clicked again, reset all nodes, links, and texts
+      // If the same node is clicked again, reset all nodes, links, texts, and paper list items to full visibility
       svg.selectAll("circle").style("opacity", 1);
       svg.selectAll("line").style("opacity", 1);
       svg.selectAll("text").style("opacity", 1);
+      document.querySelectorAll(".paper-item").forEach((item) => {
+        item.classList.remove("inactive");
+      });
       clickedNode = null;
       nodeTooltip.style.display = "none"; // Hide the tooltip
     } else {
-      // If a different node is clicked, set all nodes, links, and texts to less visible except the clicked one
+      // Dim all nodes, links, texts, and paper list items
+      svg.selectAll("circle").style("opacity", 0.1);
+      svg.selectAll("line").style("opacity", 0.1);
+      svg.selectAll("text").style("opacity", 0);
+      document.querySelectorAll(".paper-item").forEach((item) => {
+        item.classList.add("inactive");
+      });
+
+      // Highlight the selected node and its related nodes and links
       const relatedLinks = svg
         .selectAll("line")
         .filter(
@@ -427,10 +439,6 @@ document.addEventListener("DOMContentLoaded", () => {
         relatedNodes.add(link.target);
       });
 
-      svg.selectAll("circle").style("opacity", 0.1);
-      svg.selectAll("line").style("opacity", 0.1);
-      svg.selectAll("text").style("opacity", 0);
-
       relatedNodes.forEach((node) => {
         svg
           .selectAll("circle")
@@ -440,14 +448,18 @@ document.addEventListener("DOMContentLoaded", () => {
           .selectAll("text")
           .filter((d) => d === node)
           .style("opacity", 1);
+
+        // Highlight corresponding papers in the paper list
+        document.querySelectorAll(".paper-item").forEach((item) => {
+          if (item.dataset.paperId === node.paperId) {
+            item.classList.remove("inactive");
+          }
+        });
       });
 
       selectedNode.style("opacity", 1);
       relatedLinks.style("opacity", 1);
       clickedNode = selectedNode;
-
-      // Restart the simulation for better layout
-      // simulation.alpha(1).restart();
 
       // Show and update tooltip with details of the clicked node
       displayTooltip(nodeData, graphData.authors);

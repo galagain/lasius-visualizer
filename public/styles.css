@@ -324,3 +324,7 @@ button:active {
   left: 10px;
   z-index: 1000; /* Ensure it is above other elements */
 }
+
+.paper-item.inactive {
+  opacity: 0.3;
+}
