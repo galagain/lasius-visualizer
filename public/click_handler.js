@@ -278,12 +278,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const colorScaleBlue = d3
       .scaleSequential()
       .domain([0, d3.max(filteredPapers, (d) => d.citationCount)])
-      .interpolator(d3.interpolateRgb("blue", "pink")); // Interpolates between blue and pink
+      .interpolator(d3.interpolateRgb("navy", "cyan"));
 
     const colorScaleGreen = d3
       .scaleSequential()
       .domain([0, d3.max(filteredPapers, (d) => d.citationCount)])
-      .interpolator(d3.interpolateRgb("green", "orange")); // Interpolates between green and orange
+      .interpolator(d3.interpolateRgb("darkgreen", "lightgreen"));
 
     simulation = d3
       .forceSimulation(filteredPapers)
@@ -325,9 +325,9 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         if (isInQueries) {
-          return colorScaleBlue(d.citationCount); // Papers from jsonData.queries in blue
+          return colorScaleGreen(d.citationCount);
         } else if (isInQueriesMore) {
-          return colorScaleGreen(d.citationCount); // Papers from jsonData.queries_more in green
+          return colorScaleBlue(d.citationCount);
         }
         return "#ccc"; // Default color if not found in either
       })
