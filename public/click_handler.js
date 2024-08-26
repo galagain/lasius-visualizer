@@ -447,7 +447,7 @@ document.addEventListener("DOMContentLoaded", () => {
       clickedNode = selectedNode;
 
       // Restart the simulation for better layout
-      simulation.alpha(1).restart();
+      // simulation.alpha(1).restart();
 
       // Show and update tooltip with details of the clicked node
       displayTooltip(nodeData, graphData.authors);
