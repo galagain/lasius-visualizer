@@ -134,14 +134,17 @@ document.addEventListener("DOMContentLoaded", () => {
       })
     );
     updateSliderSpanPosition(index, 0, citationValues.length - 1);
-
-    // Reset the selected and inactive classes for papers
-    resetPaperListClasses();
   });
 
   function resetPaperListClasses() {
+    const minCitations = parseInt(sliderValue.textContent);
     document.querySelectorAll(".paper-item").forEach((item) => {
       item.classList.remove("selected", "inactive");
+      const citationCount = parseInt(item.dataset.citationCount);
+
+      if (citationCount < minCitations) {
+        item.classList.add("inactive");
+      }
     });
   }
 
@@ -230,6 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const paperItem = document.createElement("div");
       paperItem.classList.add("paper-item");
       paperItem.dataset.paperId = paper.paperId;
+      paperItem.dataset.citationCount = paper.citationCount;
 
       const titleLink = document.createElement("a");
       titleLink.href = paper.url;
@@ -428,6 +432,9 @@ document.addEventListener("DOMContentLoaded", () => {
       d.fx = null;
       d.fy = null;
     }
+
+    // Reset the paper list classes after the graph is updated
+    resetPaperListClasses();
   }
 
   function handleNodeClick(selectedNode, nodeData, graphData) {
@@ -442,6 +449,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       clickedNode = null;
       nodeTooltip.style.display = "none"; // Hide the tooltip
+
+      // Reset the paper list classes when the same paper is clicked again
+      resetPaperListClasses();
     } else {
       // Dim all nodes, links, texts, and paper list items
       svg.selectAll("circle").style("opacity", 0.1);
