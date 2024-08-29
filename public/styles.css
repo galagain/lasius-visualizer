@@ -334,3 +334,48 @@ button:active {
   box-shadow: 0 0 3vh #4caf50; /* Green shadow to highlight the selected paper */
   transform: scale(1.05); /* Slightly larger size for selected paper */
 }
+
+.subtitle {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #f8f9fa;
+  text-align: center;
+}
+
+.subtitle .white {
+  color: #ffffff;
+}
+
+.subtitle .green {
+  color: #4caf50;
+}
+
+.cursor {
+  display: inline-block;
+  background-color: #ccc;
+  margin-left: 0.1rem;
+  width: 3px;
+  animation: blink 1s infinite;
+}
+
+.cursor.typing {
+  animation: none;
+}
+
+@keyframes blink {
+  0% {
+    background-color: #ccc;
+  }
+  49% {
+    background-color: #ccc;
+  }
+  50% {
+    background-color: transparent;
+  }
+  99% {
+    background-color: transparent;
+  }
+  100% {
+    background-color: #ccc;
+  }
+}
