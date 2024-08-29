@@ -127,13 +127,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const papers = removeDuplicatePapers(
       jsonData.papers.filter((paper) => activePaperIds.has(paper.paperId))
     );
+
     document.dispatchEvent(
       new CustomEvent("updateGraph", {
         detail: { jsonData, minCitations: citationValue, papers },
       })
     );
     updateSliderSpanPosition(index, 0, citationValues.length - 1);
+
+    // Reset the selected and inactive classes for papers
+    resetPaperListClasses();
   });
+
+  function resetPaperListClasses() {
+    document.querySelectorAll(".paper-item").forEach((item) => {
+      item.classList.remove("selected", "inactive");
+    });
+  }
 
   document.addEventListener("updateGraph", (event) => {
     const jsonData = event.detail.jsonData;
@@ -483,7 +493,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .filter((d) => d === node)
             .style("opacity", 1);
 
-        // Highlight corresponding papers in the paper list
+          // Highlight corresponding papers in the paper list
           document.querySelectorAll(".paper-item").forEach((item) => {
             if (item.dataset.paperId === node.paperId) {
               item.classList.remove("inactive");
