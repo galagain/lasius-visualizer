@@ -421,8 +421,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function handleNodeClick(selectedNode, nodeData, graphData) {
+    // Check if the clicked node is already selected
     if (clickedNode && clickedNode.node() === selectedNode.node()) {
-      // If the same node is clicked again, reset all nodes, links, texts, and paper list items to full visibility
+      // If the same node is clicked again, reset visibility for all nodes, links, texts, and paper list items
       svg.selectAll("circle").style("opacity", 1);
       svg.selectAll("line").style("opacity", 1);
       svg.selectAll("text").style("opacity", 1);
@@ -456,26 +457,44 @@ document.addEventListener("DOMContentLoaded", () => {
         relatedNodes.add(link.target);
       });
 
-      relatedNodes.forEach((node) => {
-        svg
-          .selectAll("circle")
-          .filter((d) => d === node)
-          .style("opacity", 1);
+      if (relatedNodes.size === 0) {
+        // If the node has no links (case where it is the only active node)
+        selectedNode.style("opacity", 1);
         svg
           .selectAll("text")
-          .filter((d) => d === node)
+          .filter((d) => d === nodeData)
           .style("opacity", 1);
 
-        // Highlight corresponding papers in the paper list
         document.querySelectorAll(".paper-item").forEach((item) => {
-          if (item.dataset.paperId === node.paperId) {
+          if (item.dataset.paperId === nodeData.paperId) {
             item.classList.remove("inactive");
+            item.classList.add("selected"); // Add the selected class
           }
         });
-      });
+      } else {
+        // Otherwise, proceed normally with related nodes and links
+        relatedNodes.forEach((node) => {
+          svg
+            .selectAll("circle")
+            .filter((d) => d === node)
+            .style("opacity", 1);
+          svg
+            .selectAll("text")
+            .filter((d) => d === node)
+            .style("opacity", 1);
 
-      selectedNode.style("opacity", 1);
-      relatedLinks.style("opacity", 1);
+        // Highlight corresponding papers in the paper list
+          document.querySelectorAll(".paper-item").forEach((item) => {
+            if (item.dataset.paperId === node.paperId) {
+              item.classList.remove("inactive");
+            }
+          });
+        });
+
+        selectedNode.style("opacity", 1);
+        relatedLinks.style("opacity", 1);
+      }
+
       clickedNode = selectedNode;
 
       // Highlight the corresponding paper and scroll to it
@@ -485,11 +504,11 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       if (paperItem) {
-        paperItem.classList.add("selected"); // Add selected class to highlight the paper with a shadow
-        paperItem.scrollIntoView({ behavior: "smooth", block: "center" }); // Scroll to the item
+        paperItem.classList.add("selected");
+        paperItem.scrollIntoView({ behavior: "smooth", block: "center" });
       }
 
-      // Show and update tooltip with details of the clicked node
+      // Show and update the tooltip with details of the clicked node
       displayTooltip(nodeData, graphData.authors);
       updateTooltipPosition(nodeData);
     }
