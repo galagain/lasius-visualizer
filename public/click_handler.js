@@ -391,12 +391,14 @@ document.addEventListener("DOMContentLoaded", () => {
       .text((d) => {
         const firstAuthorId = d.authorIds[0];
         const firstAuthor = data.authors[firstAuthorId] || "Unknown";
-        const year = new Date(d.publicationDate).getFullYear();
+        const year = d.publicationDate
+          ? new Date(d.publicationDate).getFullYear()
+          : null;
 
-        // Only split if firstAuthor is a string
+        // Only split if firstAuthor is a string and add the year if it exists
         return typeof firstAuthor === "string"
-          ? `${firstAuthor.split(" ").pop()} ${year}`
-          : `${firstAuthor} ${year}`;
+          ? `${firstAuthor.split(" ").pop()}${year ? ` ${year}` : ""}`
+          : `${firstAuthor}${year ? ` ${year}` : ""}`;
       });
 
     simulation.on("tick", () => {
@@ -442,7 +444,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (clickedNode && clickedNode.node() === selectedNode.node()) {
       // If the same node is clicked again, reset visibility for all nodes, links, texts, and paper list items
       svg.selectAll("circle").style("opacity", 1);
-      svg.selectAll("line").style("opacity", 1);
+      svg.selectAll("line").style("opacity", 1).attr("stroke", "#999"); // Reset link colors
       svg.selectAll("text").style("opacity", 1);
       document.querySelectorAll(".paper-item").forEach((item) => {
         item.classList.remove("inactive", "selected"); // Remove both inactive and selected classes
@@ -455,7 +457,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       // Dim all nodes, links, texts, and paper list items
       svg.selectAll("circle").style("opacity", 0.1);
-      svg.selectAll("line").style("opacity", 0.1);
+      svg.selectAll("line").style("opacity", 0.1).attr("stroke", "#999"); // Reset link colors
       svg.selectAll("text").style("opacity", 0);
       document.querySelectorAll(".paper-item").forEach((item) => {
         item.classList.add("inactive");
@@ -470,6 +472,10 @@ document.addEventListener("DOMContentLoaded", () => {
             link.source === selectedNode.datum() ||
             link.target === selectedNode.datum()
         );
+
+      const citingLinks = svg
+        .selectAll("line")
+        .filter((link) => link.target === selectedNode.datum());
 
       const relatedNodes = new Set();
       relatedLinks.each(function (link) {
@@ -513,6 +519,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         selectedNode.style("opacity", 1);
         relatedLinks.style("opacity", 1);
+        citingLinks.style("opacity", 1).attr("stroke", "green"); // Highlight citing links in green
       }
 
       clickedNode = selectedNode;
@@ -539,17 +546,19 @@ document.addEventListener("DOMContentLoaded", () => {
       .map((authorId) => authorsData[authorId] || "Unknown Author")
       .join(", ");
 
+    const publicationDate = paperData.publicationDate
+      ? new Date(paperData.publicationDate).toLocaleDateString()
+      : "null";
+
     const tooltipHTML = `
-            <h3>${paperData.title}</h3>
-            <p><strong>${authorsList}</strong></p>
-            <br>
-            <div style="display: flex; justify-content: space-between; width: 100%;">
-              <span>${new Date(
-                paperData.publicationDate
-              ).toLocaleDateString()}</span>
-              <span>${paperData.citationCount}</span>
-            </div>
-        `;
+      <h3>${paperData.title}</h3>
+      <p><strong>${authorsList}</strong></p>
+      <br>
+      <div style="display: flex; justify-content: space-between; width: 100%;">
+        <span>${publicationDate}</span>
+        <span>${paperData.citationCount}</span>
+      </div>
+    `;
 
     nodeTooltip.innerHTML = tooltipHTML;
     nodeTooltip.style.display = "block";
