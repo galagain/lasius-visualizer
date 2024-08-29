@@ -234,6 +234,22 @@ document.addEventListener("DOMContentLoaded", () => {
       paperItem.appendChild(titleLink);
       paperItem.appendChild(detailsDiv);
 
+      paperItem.addEventListener("click", () => {
+        const node = d3
+          .selectAll("circle")
+          .filter((d) => d.paperId === paper.paperId);
+
+        if (!node.empty()) {
+          handleNodeClick(
+            node,
+            node.datum(),
+            JSON.parse(
+              document.querySelector(".paper-button.active").dataset.json
+            )
+          );
+        }
+      });
+
       titleList.appendChild(paperItem);
     });
 
