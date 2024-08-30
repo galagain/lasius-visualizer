@@ -1,8 +1,10 @@
-# Lasius Visualizer Machine Setup Guide
+# Lasius Visualizer Setup Guide
 
-Before proceeding with the setup of the Lasius Visualizer, you need to set up your machine. The steps below will guide you through the installation process.
+This guide will walk you through setting up the Lasius Visualizer project on an Ubuntu server. The setup includes installing Node.js, Express, PM2, Nginx, configuring SSL with Certbot, and setting up DNS.
 
 ## Machine Setup
+
+Before proceeding with the setup of the Lasius Visualizer, you need to set up your machine. The steps below will guide you through the installation process.
 
 1. **Update Package Lists:**
 
@@ -22,10 +24,6 @@ Before proceeding with the setup of the Lasius Visualizer, you need to set up yo
    ```
 
 Now that your machine is set up, you can proceed with the Lasius Visualizer setup.
-
-# Lasius Visualizer Setup Guide
-
-This guide will walk you through setting up the Lasius Visualizer project on an Ubuntu server. The setup includes installing Node.js, Express, PM2, Nginx, configuring SSL with Certbot, and setting up DNS.
 
 ## Prerequisites
 
