@@ -1,6 +1,6 @@
 const whitePart1 = "Your ";
 const greenPart = "State-of-the-Art";
-const whitePart2 = " Creation Tool";
+const whitePart2 = " Creation Tool (Visualizer)";
 
 const whiteSpan1 = document.querySelector(".typed-text .white:first-child");
 const greenSpan = document.querySelector(".typed-text .green");
@@ -8,8 +8,8 @@ const whiteSpan2 = document.querySelector(".typed-text .white:last-child");
 
 const cursorSpan = document.querySelector(".cursor");
 
-const typingDelay = 200;
-const erasingDelay = 100;
+const typingDelay = 100;
+const erasingDelay = 20;
 const newTextDelay = 2000; // Delay between current and next text
 let partIndex = 0;
 let charIndex = 0;
